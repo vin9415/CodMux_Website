@@ -135,11 +135,10 @@ export const HomeView: React.FC = () => {
             <div className="lg:col-span-5 relative">
               <div className="relative rounded-2xl overflow-hidden border border-stone-200/80 shadow-xl bg-white group">
                 <img
-                  src="/src/assets/images/student_codemux_cup_1793428677514.jpg"
-                  alt="Student studying in Code Mux class with Code Mux coffee cup"
-                  className="w-full h-auto object-cover aspect-[16/10] group-hover:scale-102 transition-transform duration-500"
-                  referrerPolicy="no-referrer"
-                />
+  src="/images/student_codemux_cup_1793428677514.jpg"
+  alt="Student studying in Code Mux class with Code Mux coffee cup"
+  className="w-full h-auto object-cover aspect-[16/10] group-hover:scale-102 transition-transform duration-500"
+/>
                 <div className="p-4 bg-white border-t border-stone-100 flex items-center justify-between text-xs">
                   <div>
                     <div className="font-semibold text-stone-900">Practical Tech Training</div>
