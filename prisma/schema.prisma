@@ -1,0 +1,241 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  MENTOR
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ClassStatus {
+  UPCOMING
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum ProjectDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum SubmissionStatus {
+  PENDING_REVIEW
+  APPROVED
+  NEEDS_CHANGES
+}
+
+enum CertificateStatus {
+  ACTIVE
+  REVOKED
+}
+
+enum LeadStatus {
+  PENDING
+  CONTACTED
+  ENROLLED
+}
+
+enum InquiryStatus {
+  NEW
+  RESPONDED
+}
+
+// ---------------- USER & AUTH ----------------
+model User {
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         Role       @default(STUDENT)
+  phone        String?
+  age          Int?
+  track        String? // e.g. "Full-Stack Web & Cloud Engineering (React, Node & AWS)"
+  batch        String? // e.g. "Cohort 2026-A"
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relations
+  mentorClasses      ClassSchedule[]            @relation("MentorClasses")
+  attendanceRecords  AttendanceRecord[]
+  projectSubmissions StudentProjectSubmission[]
+  issuedCertificates CertificateRecord[]        @relation("StudentCertificates")
+  createdAnnounce    Announcement[]             @relation("CreatedAnnouncements")
+
+  @@index([email])
+  @@index([role])
+}
+
+// ---------------- TIMETABLE & CLASSES ----------------
+model ClassSchedule {
+  id           Int         @id @default(autoincrement())
+  track        String
+  batch        String
+  topic        String
+  description  String?
+  mentorId     Int
+  mentor       User        @relation("MentorClasses", fields: [mentorId], references: [id])
+  date         DateTime
+  timeSlot     String // e.g. "10:00 AM - 12:00 PM"
+  roomLink     String
+  pptTitle     String?
+  pptUrl       String?
+  recordingUrl String?
+  status       ClassStatus @default(UPCOMING)
+  createdAt    DateTime    @default(now())
+
+  attendance AttendanceRecord[]
+
+  @@index([track, batch])
+  @@index([date])
+}
+
+// ---------------- ATTENDANCE ----------------
+model AttendanceRecord {
+  id        Int              @id @default(autoincrement())
+  classId   Int
+  class     ClassSchedule    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  studentId Int
+  student   User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status    AttendanceStatus @default(PRESENT)
+  markedBy  String // e.g. mentor name or admin email
+  remarks   String?
+  markedAt  DateTime         @default(now())
+
+  @@unique([classId, studentId])
+  @@index([studentId])
+}
+
+// ---------------- PROJECTS & SUBMISSIONS ----------------
+model Project {
+  id                 Int               @id @default(autoincrement())
+  track              String
+  title              String
+  description        String
+  difficulty         ProjectDifficulty @default(INTERMEDIATE)
+  deadline           DateTime?
+  deliverables       String[]
+  evaluationCriteria String[]
+  starterCodeUrl     String?
+  createdAt          DateTime          @default(now())
+
+  submissions StudentProjectSubmission[]
+
+  @@index([track])
+}
+
+model StudentProjectSubmission {
+  id          Int              @id @default(autoincrement())
+  projectId   Int
+  project     Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  studentId   Int
+  student     User             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  githubUrl   String
+  liveDemoUrl String?
+  notes       String?
+  status      SubmissionStatus @default(PENDING_REVIEW)
+  grade       String?
+  feedback    String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  submittedAt DateTime         @default(now())
+
+  @@index([studentId])
+  @@index([projectId])
+}
+
+// ---------------- CERTIFICATES & AUDIT ----------------
+model CertificateRecord {
+  id                      Int               @id @default(autoincrement())
+  certificateSerialNumber String            @unique // CMX-YYYY-COURSE-XXXXXX
+  studentId               Int
+  student                 User              @relation("StudentCertificates", fields: [studentId], references: [id])
+  studentNameSnapshot     String
+  courseId                String
+  courseNameSnapshot      String
+  instructorNameSnapshot  String
+  courseDurationSnapshot  String            @default("60 Days")
+  enrollmentDate          String
+  completionDate          String
+  issueDate               String
+  certificateStatus       CertificateStatus @default(ACTIVE)
+  templateVersion         String            @default("v1.0")
+  issuedBy                String            @default("admin@codemux.in")
+  revokedReason           String?
+  revokedAt               DateTime?
+  revokedBy               String?
+  createdAt               DateTime          @default(now())
+  updatedAt               DateTime          @updatedAt
+
+  auditLogs CertificateAuditLog[]
+
+  @@index([certificateSerialNumber])
+  @@index([studentId])
+}
+
+model CertificateAuditLog {
+  id                      Int                @id @default(autoincrement())
+  certificateSerialNumber String
+  certificate             CertificateRecord? @relation(fields: [certificateSerialNumber], references: [certificateSerialNumber], onDelete: Cascade)
+  action                  String // ISSUED, REVOKED, REISSUED, VERIFIED
+  performedBy             String
+  details                 String
+  reason                  String?
+  timestamp               DateTime           @default(now())
+
+  @@index([certificateSerialNumber])
+}
+
+// ---------------- LEADS, INQUIRIES & ANNOUNCEMENTS ----------------
+model EarlyAccessLead {
+  id          Int        @id @default(autoincrement())
+  name        String
+  email       String
+  phone       String?
+  interest    String
+  status      LeadStatus @default(PENDING)
+  submittedAt DateTime   @default(now())
+
+  @@index([email])
+}
+
+model ContactInquiry {
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String
+  subject     String
+  interest    String
+  message     String
+  status      InquiryStatus @default(NEW)
+  submittedAt DateTime      @default(now())
+}
+
+model Announcement {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  targetRole String   @default("ALL") // ALL, STUDENT, MENTOR
+  creatorId  Int
+  creator    User     @relation("CreatedAnnouncements", fields: [creatorId], references: [id])
+  createdAt  DateTime @default(now())
+}
