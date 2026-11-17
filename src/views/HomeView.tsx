@@ -69,93 +69,137 @@ export const HomeView: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col bg-[#FAF8F5]">
-      {/* SECTION 1: HERO */}
-      <section className="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 border-b border-stone-200 bg-gradient-to-b from-[#FFFDF9] via-[#FAF8F5] to-[#F5F2EC]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Eyebrow */}
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-100/70 border border-orange-200 text-stone-800 text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-[#FF6B16]" />
-                <span className="text-[#FF6B16]">Junior Foundation Academy</span>
-                <span className="text-stone-300">|</span>
-                <span>Career Tech Specializations</span>
-              </div>
+     
+{/* SECTION 1: HERO */}
+<section className="relative overflow-hidden bg-gradient-to-br from-[#FFFCF7] via-[#FFF8EF] to-[#F8F4ED] border-b border-stone-200">
 
-              {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-950 tracking-tight leading-[1.1] font-display">
-                	Your Next Big Thing Starts Here with{' '}
-                <span className="text-[#FF6B16]"> CoDMux </span>
-              </h1>
+  {/* Decorative Background */}
+  <div className="absolute w-[500px] h-[500px] rounded-full border border-orange-200/60 top-10 right-[-100px] pointer-events-none" />
+  <div className="absolute w-[380px] h-[380px] rounded-full border border-orange-200/50 top-24 right-[-40px] pointer-events-none" />
+  <div className="absolute w-[250px] h-[250px] rounded-full border border-orange-200/40 top-40 right-8 pointer-events-none" />
 
-              {/* Supporting Text */}
-              <p className="text-base sm:text-lg text-stone-600 max-w-xl leading-relaxed">
-                Mentor-led practical learning tailored to each stage. From <strong>Vedic Maths, English Communication, Hindi Vyakaran &amp; Young Coding for school learners</strong>, to Full-Stack, Data &amp; AI Career tracks for college graduates.
-              </p>
+  <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-14 lg:py-20 relative z-10">
 
-              {/* CTAs */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
-                <button
-                  onClick={() => openEarlyAccessModal()}
-                  className="px-6 py-3.5 text-xs sm:text-sm font-semibold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  Get Early Access <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => navigateTo('domains')}
-                  className="px-6 py-3.5 text-xs sm:text-sm font-semibold text-stone-800 bg-white border border-stone-300 hover:border-[#FF6B16] hover:text-[#FF6B16] rounded-xl shadow-xs transition-all cursor-pointer"
-                >
-                  Explore Focus Areas
-                </button>
-              </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-4 items-center">
 
-              {/* Supporting Highlights */}
-              <div className="pt-6 border-t border-stone-200 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-stone-600">
-                <div className="space-y-1">
-                  <div className="font-semibold text-stone-900">Project-Based</div>
-                  <div>Build real apps</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-stone-900">Structured</div>
-                  <div>Clear roadmaps</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-stone-900">Mentor Guidance</div>
-                  <div>Constructive reviews</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-stone-900">Career Prep</div>
-                  <div>Interviews &amp; DSA</div>
-                </div>
-              </div>
-            </div>
+      {/* LEFT CONTENT */}
+      <div className="space-y-6 relative z-20">
 
-            {/* Right Visual Image */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative rounded-2xl overflow-hidden border border-stone-200/80 shadow-xl bg-white group">
-                <img
-  src="/images/student_codemux_cup_1793428677514.jpg"
-  alt="Student studying in Code Mux class with Code Mux coffee cup"
-  className="w-full h-auto object-cover aspect-[16/10] group-hover:scale-102 transition-transform duration-500"
-/>
-                <div className="p-4 bg-white border-t border-stone-100 flex items-center justify-between text-xs">
-                  <div>
-                    <div className="font-semibold text-stone-900">Practical Tech Training</div>
-                    <div className="text-[11px] text-stone-500">Curriculums &amp; Schedules in Preparation</div>
-                  </div>
-                  <button
-                    onClick={() => navigateTo('domains')}
-                    className="text-[#FF6B16] font-semibold text-xs hover:underline shrink-0 cursor-pointer"
-                  >
-                    Learn More →
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 border border-orange-200 text-[#D9570B] text-xs font-bold">
+          <Sparkles className="w-4 h-4" />
+          Learn. Build. Grow with CoDMux.
         </div>
-      </section>
+
+        <h1 className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold text-[#254C49] tracking-tight leading-[1.12] font-display">
+          Your Next Big Thing Starts Here
+          <span className="text-[#FF6B16]">With CoDMux.</span>
+        </h1>
+
+        <p className="text-base sm:text-lg text-stone-600 max-w-xl leading-relaxed">
+          From young learners exploring coding, mathematics and communication to graduates mastering Full-Stack Development, Data Analytics and AI — discover learning that prepares you for tomorrow.
+        </p>
+
+        {/* BUTTONS */}
+        <div className="flex flex-wrap gap-4 pt-2">
+
+          <button
+            onClick={() => openEarlyAccessModal()}
+            className="px-7 py-4 text-sm font-bold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl shadow-lg shadow-orange-200 transition-all hover:-translate-y-1 flex items-center gap-2 cursor-pointer"
+          >
+            Get Early Access
+            <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={() => navigateTo('domains')}
+            className="px-7 py-4 text-sm font-bold text-stone-800 bg-white border border-stone-300 hover:border-[#FF6B16] rounded-xl transition-all cursor-pointer"
+          >
+            Explore Courses
+          </button>
+
+        </div>
+
+        {/* HIGHLIGHTS */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-7 border-t border-stone-200">
+
+          {[
+            ['Project Based', 'Real-world projects'],
+            ['Expert Mentors', 'Personal guidance'],
+            ['Live Learning', 'Interactive sessions'],
+            ['Career Ready', 'Practical skills'],
+          ].map(([title, desc]) => (
+            <div key={title}>
+              <div className="text-sm font-bold text-stone-900">{title}</div>
+              <div className="text-xs text-stone-500 mt-1">{desc}</div>
+            </div>
+          ))}
+
+        </div>
+      </div>
+
+      {/* RIGHT CHARACTER SECTION */}
+      <div className="relative min-h-[430px] sm:min-h-[520px] flex items-center justify-center">
+
+        {/* Glowing Circle */}
+        <div className="absolute w-[310px] h-[310px] sm:w-[440px] sm:h-[440px] rounded-full bg-orange-100/70 blur-2xl" />
+
+        <div className="absolute w-[340px] h-[340px] sm:w-[440px] sm:h-[440px] rounded-full border border-orange-200" />
+
+        {/* BOY CHARACTER IMAGE */}
+        <div className="relative z-10 w-full max-w-[430px] flex justify-center">
+          <img
+            src="/images/sticker.png"
+            alt="CoDMux boy mascot"
+            className="w-full max-h-[490px] object-contain drop-shadow-xl"
+          />
+        </div>
+
+        {/* FLOATING COURSE CARDS */}
+
+        <div className="absolute top-[5%] left-0 sm:left-[-2%] z-20 bg-white rounded-2xl shadow-lg border border-stone-200 px-4 py-3 flex items-center gap-3 animate-bounce [animation-duration:4s]">
+          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+            <Code className="w-5 h-5" />
+          </div>
+          <span className="font-bold text-sm text-blue-700">Coding</span>
+        </div>
+
+        <div className="absolute top-[8%] right-0 sm:right-[-2%] z-20 bg-white rounded-2xl shadow-lg border border-stone-200 px-4 py-3 flex items-center gap-3 animate-bounce [animation-duration:5s]">
+          <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <span className="font-bold text-sm text-purple-700">AI & Data</span>
+        </div>
+
+        <div className="absolute top-[40%] left-[-2%] sm:left-[-5%] z-20 bg-white rounded-2xl shadow-lg border border-stone-200 px-4 py-3 flex items-center gap-3 animate-bounce [animation-duration:4.5s]">
+          <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
+            <Calculator className="w-5 h-5" />
+          </div>
+          <span className="font-bold text-sm text-amber-700">Vedic Maths</span>
+        </div>
+
+        <div className="absolute top-[42%] right-[-2%] sm:right-[-5%] z-20 bg-white rounded-2xl shadow-lg border border-stone-200 px-4 py-3 flex items-center gap-3 animate-bounce [animation-duration:5.5s]">
+          <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+            <BookOpen className="w-5 h-5" />
+          </div>
+          <span className="font-bold text-sm text-emerald-700">English</span>
+        </div>
+
+        <div className="absolute bottom-[8%] left-[5%] sm:left-[2%] z-20 bg-white rounded-2xl shadow-lg border border-stone-200 px-4 py-3 flex items-center gap-3 animate-bounce [animation-duration:4.8s]">
+          <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+            <Briefcase className="w-5 h-5" />
+          </div>
+          <span className="font-bold text-sm text-rose-700">Career Prep</span>
+        </div>
+
+        {/* SPARKLES */}
+        <Sparkles className="absolute top-[20%] left-[30%] w-7 h-7 text-amber-400 z-20" />
+        <Sparkles className="absolute bottom-[18%] right-[22%] w-6 h-6 text-orange-400 z-20" />
+
+      </div>
+
+    </div>
+  </div>
+</section>
 
       {/* SECTION 2: FOCUS AREAS */}
       <section className="py-20 bg-white border-b border-stone-200">

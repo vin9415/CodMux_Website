@@ -104,7 +104,7 @@ export const CertificateVerificationView: React.FC = () => {
         </div>
 
         <h1 className="text-3xl sm:text-4xl font-extrabold text-stone-900 tracking-tight font-display">
-          Verify Your Code Mux Certificate
+          Verify Your CoDMux Certificate
         </h1>
 
         <p className="text-sm text-stone-600 leading-relaxed">
