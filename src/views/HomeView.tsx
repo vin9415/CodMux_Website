@@ -201,34 +201,96 @@ export const HomeView: React.FC = () => {
   </div>
 </section>
 
+      
       {/* SECTION 2: FOCUS AREAS */}
-      <section className="py-20 bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#FF6B16]">
-              Core Training Tracks
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-stone-900 font-display">
-              Programs Built for Every Learning Stage
-            </h2>
-            <p className="text-sm text-stone-600 leading-relaxed">
-              Explore structured curriculums designed for young learners building academic mastery and graduates preparing for tech careers.
-            </p>
+      <section className="relative py-16 lg:py-20 bg-gradient-to-b from-white via-[#FFFCF8] to-[#FFF7ED] border-b border-orange-100 overflow-hidden">
+        {/* Decorative background */}
+        <div className="absolute top-20 right-0 w-72 h-72 bg-orange-100/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-100/30 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Interactive Age Selector: Ask Age First */}
-            <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-[#FAF8F5] border border-orange-200 shadow-xs max-w-xl mx-auto text-left space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <span className="text-[11px] font-bold text-[#FF6B16] uppercase tracking-wider block">
-                    Find Relatable Tracks
-                  </span>
-                  <span className="text-xs font-semibold text-stone-800">
-                    What is the learner's age?
-                  </span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+          {/* Section Heading */}
+          <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
+            <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FF6B16]">
+              <span className="w-8 h-px bg-orange-300" />
+              Core Training Tracks
+              <span className="w-8 h-px bg-orange-300" />
+            </span>
+
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-stone-900 font-display tracking-tight">
+              Programs Built for{" "}
+              <span className="text-[#FF6B16]">Every Learning Stage</span>
+            </h2>
+
+            <p className="text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
+              Explore structured curriculums designed for young learners
+              building academic mastery and graduates preparing for tech careers.
+            </p>
+          </div>
+
+          {/* Mascot + Age Selector Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center mb-10">
+
+            {/* LEFT: CoDMux Girl Mascot */}
+            <div className="lg:col-span-4 relative flex flex-col items-center justify-center">
+
+              {/* Speech Bubble */}
+              <div className="relative z-20 mb-2 lg:absolute lg:top-5 lg:right-0 lg:mb-0">
+                <div className="bg-white border border-orange-200 rounded-2xl px-5 py-3 shadow-md relative">
+                  <p className="text-sm sm:text-base font-bold text-stone-800 text-center">
+                    Choose the right
+                    <span className="block text-[#FF6B16]">
+                      track for you!
+                    </span>
+                  </p>
+                  <div className="hidden lg:block absolute -bottom-2 left-8 w-4 h-4 bg-white border-r border-b border-orange-200 rotate-45" />
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center bg-white border border-stone-300 rounded-xl px-2.5 py-1.5 focus-within:border-[#FF6B16] shadow-2xs">
-                    <span className="text-xs text-stone-500 mr-1.5 font-medium">Age:</span>
+              </div>
+
+              {/* Mascot Image */}
+              <div className="relative w-full max-w-[300px] lg:max-w-none">
+                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-52 h-52 bg-orange-200/40 rounded-full blur-2xl" />
+
+                <img
+                  src="/images/sticker2.webp"
+                  alt="CoDMux girl mascot helping learners choose their courses"
+                  className="relative z-10 w-full h-auto max-h-[430px] object-contain object-center drop-shadow-xl"
+                />
+              </div>
+
+              <div className="relative z-10 -mt-2 text-center">
+                <span className="inline-flex items-center gap-2 bg-white border border-orange-100 rounded-full px-4 py-2 text-xs font-semibold text-stone-700 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-green-500" />
+                  Your CoDMux Learning Guide
+                </span>
+              </div>
+            </div>
+
+            {/* RIGHT: Interactive Age Selector */}
+            <div className="lg:col-span-8">
+              <div className="relative bg-white/95 border border-orange-200 rounded-3xl p-5 sm:p-7 shadow-lg shadow-orange-100/50">
+
+                {/* Panel Heading */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-[#FF6B16]" />
+                    </div>
+                    <div>
+                      <span className="block text-xs font-bold uppercase tracking-wider text-[#FF6B16]">
+                        Find Relatable Tracks
+                      </span>
+                      <h3 className="text-lg sm:text-xl font-bold text-stone-900">
+                        What is the learner's age?
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 focus-within:border-[#FF6B16] focus-within:ring-2 focus-within:ring-orange-100">
+                    <span className="text-xs text-stone-500 font-medium">
+                      Age:
+                    </span>
                     <input
                       type="number"
                       min="5"
@@ -236,166 +298,228 @@ export const HomeView: React.FC = () => {
                       value={homeAgeInput}
                       onChange={(e) => handleHomeAgeInput(e.target.value)}
                       placeholder="e.g. 10"
-                      className="w-16 text-xs font-bold text-stone-900 focus:outline-none"
+                      className="w-20 bg-transparent text-sm font-bold text-stone-900 focus:outline-none"
                     />
+                    {homeLearnerAge !== null && (
+                      <button
+                        type="button"
+                        onClick={handleClearHomeAge}
+                        className="text-xs text-stone-500 hover:text-[#FF6B16] cursor-pointer"
+                      >
+                        Clear
+                      </button>
+                    )}
                   </div>
-                  {homeLearnerAge !== null && (
-                    <button
-                      type="button"
-                      onClick={handleClearHomeAge}
-                      className="text-[11px] text-stone-500 hover:text-stone-800 underline px-1 cursor-pointer"
-                    >
-                      Clear
-                    </button>
-                  )}
                 </div>
-              </div>
 
-              {/* Quick Age Chips */}
-              <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-stone-200/70">
-                <span className="text-[11px] text-stone-500 mr-1">Quick pick:</span>
-                {[7, 10, 13, 16, 18, 21].map((age) => (
-                  <button
-                    key={age}
-                    type="button"
-                    onClick={() => handleSelectHomeAge(age)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                      homeLearnerAge === age
-                        ? 'bg-[#FF6B16] text-white shadow-xs'
-                        : 'bg-white text-stone-700 border border-stone-200 hover:border-orange-300 hover:bg-orange-50/50'
-                    }`}
-                  >
-                    {age} yrs
-                  </button>
-                ))}
-              </div>
-
-              {/* Dynamic Notification or Tab Fallback */}
-              {homeLearnerAge !== null ? (
-                <div className="text-xs text-stone-700 bg-orange-100/70 border border-orange-200 px-3.5 py-2 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <span>
-                      Relatable tracks for <strong>Age {homeLearnerAge}</strong>:{' '}
-                      <span className="font-bold text-[#FF6B16]">
-                        {homeLearnerAge < 18 ? '🌟 Junior Foundation & Enrichment Academy' : '💼 University, Tech & Career Tracks'}
-                      </span>
-                      {' '}+ Universal Skills
+                {/* Quick Age Selection */}
+                <div className="border-t border-stone-100 pt-5">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <span className="text-xs font-medium text-stone-500 mr-1">
+                      Quick pick:
                     </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setHomeAgeFilterMode('relatable_all')}
-                      className={`px-2 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-                        homeAgeFilterMode === 'relatable_all'
-                          ? 'bg-stone-900 text-white shadow-xs'
-                          : 'bg-white text-stone-700 border border-stone-200'
-                      }`}
-                    >
-                      Show All Relatable ({
-                        FOCUS_AREAS.filter((a) => (homeLearnerAge < 18 ? a.ageGroup === 'junior' || a.ageGroup === 'general' : a.ageGroup === 'career' || a.ageGroup === 'general')).length
-                      })
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setHomeAgeFilterMode('exact')}
-                      className={`px-2 py-1 rounded-md text-[11px] font-bold transition-all cursor-pointer ${
-                        homeAgeFilterMode === 'exact'
-                          ? 'bg-[#FF6B16] text-white shadow-xs'
-                          : 'bg-white text-stone-700 border border-stone-200'
-                      }`}
-                    >
-                      Exact Age Fit ({
-                        FOCUS_AREAS.filter((a) => homeLearnerAge >= a.minAge && homeLearnerAge <= a.maxAge).length
-                      })
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleClearHomeAge}
-                      className="text-stone-500 hover:text-stone-800 underline text-[11px] cursor-pointer ml-1"
-                    >
-                      Reset Age
-                    </button>
+
+                    {[7, 10, 13, 16, 18, 21].map((age) => (
+                      <button
+                        key={age}
+                        type="button"
+                        onClick={() => handleSelectHomeAge(age)}
+                        className={`px-4 py-2 rounded-xl text-sm font-bold border transition-all duration-200 cursor-pointer ${
+                          homeLearnerAge === age
+                            ? 'bg-[#FF6B16] text-white border-[#FF6B16] shadow-md shadow-orange-200 scale-105'
+                            : 'bg-white text-stone-700 border-stone-200 hover:border-orange-400 hover:bg-orange-50'
+                        }`}
+                      >
+                        {age} yrs
+                      </button>
+                    ))}
                   </div>
                 </div>
-              ) : (
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setHomeTrackTab('junior')}
-                    className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      homeTrackTab === 'junior'
-                        ? 'bg-white text-stone-900 shadow-xs border border-stone-200'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    <GraduationCap className="w-3.5 h-3.5 text-[#FF6B16]" />
-                    School &amp; Junior Foundation
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHomeTrackTab('career')}
-                    className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      homeTrackTab === 'career'
-                        ? 'bg-white text-stone-900 shadow-xs border border-stone-200'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    <Briefcase className="w-3.5 h-3.5 text-[#FF6B16]" />
-                    University &amp; Tech Careers
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setHomeTrackTab('general')}
-                    className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      homeTrackTab === 'general'
-                        ? 'bg-white text-stone-900 shadow-xs border border-stone-200'
-                        : 'text-stone-600 hover:text-stone-900'
-                    }`}
-                  >
-                    <Globe className="w-3.5 h-3.5 text-[#FF6B16]" />
-                    Universal Tracks
-                  </button>
-                </div>
-              )}
+
+                {/* Dynamic Age Result */}
+                {homeLearnerAge !== null && (
+                  <div className="mt-5 p-4 rounded-2xl bg-orange-50 border border-orange-200">
+                    <div className="flex flex-col gap-3">
+                      <div>
+                        <span className="text-xs text-stone-600">
+                          Recommended learning stage for
+                        </span>
+                        <h4 className="font-bold text-stone-900">
+                          Age {homeLearnerAge}
+                          <span className="text-[#FF6B16]">
+                            {homeLearnerAge < 18
+                              ? " — Junior Foundation & Enrichment"
+                              : " — University, Tech & Career"}
+                          </span>
+                        </h4>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setHomeAgeFilterMode('relatable_all')}
+                          className={`px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            homeAgeFilterMode === 'relatable_all'
+                              ? 'bg-stone-900 text-white'
+                              : 'bg-white text-stone-700 border border-stone-200 hover:border-orange-300'
+                          }`}
+                        >
+                          Show All Relatable (
+                          {FOCUS_AREAS.filter((a) =>
+                            homeLearnerAge < 18
+                              ? a.ageGroup === 'junior' || a.ageGroup === 'general'
+                              : a.ageGroup === 'career' || a.ageGroup === 'general'
+                          ).length}
+                          )
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setHomeAgeFilterMode('exact')}
+                          className={`px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            homeAgeFilterMode === 'exact'
+                              ? 'bg-[#FF6B16] text-white'
+                              : 'bg-white text-stone-700 border border-stone-200 hover:border-orange-300'
+                          }`}
+                        >
+                          Exact Age Fit (
+                          {FOCUS_AREAS.filter(
+                            (a) =>
+                              homeLearnerAge >= a.minAge &&
+                              homeLearnerAge <= a.maxAge
+                          ).length}
+                          )
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleClearHomeAge}
+                          className="px-3 py-2 text-xs font-semibold text-stone-500 hover:text-[#FF6B16] cursor-pointer"
+                        >
+                          Reset Age
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Learning Track Tabs */}
+                {homeLearnerAge === null && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+
+                    <button
+                      type="button"
+                      onClick={() => setHomeTrackTab('junior')}
+                      className={`group flex items-center gap-3 p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        homeTrackTab === 'junior'
+                          ? 'bg-orange-50 border-[#FF6B16] shadow-md shadow-orange-100'
+                          : 'bg-white border-stone-200 hover:border-orange-300 hover:bg-orange-50/50'
+                      }`}
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                        <GraduationCap className="w-5 h-5 text-[#FF6B16]" />
+                      </div>
+                      <div>
+                        <span className="block text-xs sm:text-sm font-bold text-stone-900">
+                          School & Junior
+                        </span>
+                        <span className="text-[11px] text-stone-500">
+                          Foundation
+                        </span>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setHomeTrackTab('career')}
+                      className={`group flex items-center gap-3 p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        homeTrackTab === 'career'
+                          ? 'bg-orange-50 border-[#FF6B16] shadow-md shadow-orange-100'
+                          : 'bg-white border-stone-200 hover:border-orange-300 hover:bg-orange-50/50'
+                      }`}
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                        <Briefcase className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <span className="block text-xs sm:text-sm font-bold text-stone-900">
+                          University & Tech
+                        </span>
+                        <span className="text-[11px] text-stone-500">
+                          Careers
+                        </span>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setHomeTrackTab('general')}
+                      className={`group flex items-center gap-3 p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        homeTrackTab === 'general'
+                          ? 'bg-orange-50 border-[#FF6B16] shadow-md shadow-orange-100'
+                          : 'bg-white border-stone-200 hover:border-orange-300 hover:bg-orange-50/50'
+                      }`}
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                        <Globe className="w-5 h-5 text-emerald-600" />
+                      </div>
+                      <div>
+                        <span className="block text-xs sm:text-sm font-bold text-stone-900">
+                          Universal
+                        </span>
+                        <span className="text-[11px] text-stone-500">
+                          All learners
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* International & Indian Curriculum Highlights Strip */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-8 text-xs text-stone-600">
-            <span className="flex items-center gap-1.5 bg-orange-50 px-3 py-1 rounded-full border border-orange-200 text-[#FF6B16] font-semibold">
-              <Globe className="w-3.5 h-3.5" /> For Indian &amp; International Students (US, UK, UAE, Singapore, Canada)
+          {/* Curriculum and Learning Highlights */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-10 text-xs text-stone-600">
+            <span className="flex items-center gap-2 bg-orange-50 px-4 py-2 rounded-full border border-orange-200 text-[#FF6B16] font-semibold">
+              <Globe className="w-4 h-4" />
+              For Indian & International Students (US, UK, UAE, Singapore, Canada)
             </span>
-            <span className="flex items-center gap-1.5 bg-stone-100 px-3 py-1 rounded-full border border-stone-200 text-stone-700">
-              <Award className="w-3.5 h-3.5 text-amber-600" /> CBSE, ICSE, Cambridge IGCSE, IB &amp; US Common Core Aligned
+
+            <span className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-stone-200 text-stone-700">
+              <Award className="w-4 h-4 text-amber-600" />
+              CBSE, ICSE, Cambridge IGCSE, IB & US Common Core Aligned
             </span>
-            <span className="flex items-center gap-1.5 bg-stone-100 px-3 py-1 rounded-full border border-stone-200 text-stone-700">
-              <Clock className="w-3.5 h-3.5 text-blue-600" /> Global Time-Zone Friendly Batches (IST, EST, PST, GMT, GST)
+
+            <span className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-stone-200 text-stone-700">
+              <Clock className="w-4 h-4 text-blue-600" />
+              Global Time-Zone Friendly Batches (IST, EST, PST, GMT, GST)
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Course Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {(homeLearnerAge !== null
               ? FOCUS_AREAS.filter((a) => {
                   if (homeAgeFilterMode === 'exact') {
-                    return homeLearnerAge >= a.minAge && homeLearnerAge <= a.maxAge;
+                    return (
+                      homeLearnerAge >= a.minAge &&
+                      homeLearnerAge <= a.maxAge
+                    );
                   }
-                  // 'relatable_all': strictly junior+general for under 18, career+general for 18+
-                  if (homeLearnerAge < 18) {
-                    return a.ageGroup === 'junior' || a.ageGroup === 'general';
-                  } else {
-                    return a.ageGroup === 'career' || a.ageGroup === 'general';
-                  }
+
+                  return homeLearnerAge < 18
+                    ? a.ageGroup === 'junior' || a.ageGroup === 'general'
+                    : a.ageGroup === 'career' || a.ageGroup === 'general';
                 })
               : FOCUS_AREAS.filter((a) => a.ageGroup === homeTrackTab)
             ).map((area) => (
               <div
                 key={area.id}
-                className="p-6 rounded-2xl bg-[#FAF8F5] border border-stone-200/90 hover:border-orange-400 hover:shadow-md transition-all flex flex-col justify-between group"
+                className="relative p-6 rounded-2xl bg-white border border-stone-200 hover:border-orange-400 hover:shadow-xl hover:shadow-orange-100/50 transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-orange-100/70 border border-orange-200 flex items-center justify-center text-[#FF6B16]">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center">
                       {area.id === 'vedic-maths' && <Calculator className="w-6 h-6 text-[#FF6B16]" />}
                       {area.id === 'english-junior' && <BookOpen className="w-6 h-6 text-amber-700" />}
                       {area.id === 'hindi-junior' && <Languages className="w-6 h-6 text-[#FF6B16]" />}
@@ -410,52 +534,66 @@ export const HomeView: React.FC = () => {
                       {area.id === 'cybersecurity' && <ShieldCheck className="w-6 h-6 text-rose-600" />}
                       {area.id === 'digital-ethics' && <Globe className="w-6 h-6 text-teal-600" />}
                     </div>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white border border-stone-200 text-stone-700">
+
+                    <span className="text-[10px] font-semibold px-3 py-1 rounded-full bg-stone-50 border border-stone-200 text-stone-600">
                       {area.domainTag}
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-stone-900 font-display mb-1.5 group-hover:text-[#FF6B16] transition-colors leading-snug">
+
+                  <h3 className="text-base font-bold text-stone-900 font-display mb-2 group-hover:text-[#FF6B16] transition-colors leading-snug">
                     {area.title}
                   </h3>
-                  <p className="text-xs text-stone-600 leading-relaxed mb-3 line-clamp-3">
+
+                  <p className="text-xs text-stone-600 leading-relaxed mb-4 line-clamp-3">
                     {area.description}
                   </p>
 
                   {area.globalCurriculum && (
-                    <div className="mb-3 px-2 py-1 rounded-md bg-white border border-stone-200 text-[10px] text-stone-600 flex items-center gap-1 truncate">
+                    <div className="mb-3 px-2.5 py-1.5 rounded-lg bg-stone-50 border border-stone-100 text-[10px] text-stone-600 flex items-center gap-1.5">
                       <Globe className="w-3 h-3 text-[#FF6B16] shrink-0" />
                       <span className="truncate">{area.globalCurriculum}</span>
                     </div>
                   )}
 
-                  <div className="text-xs space-y-1 pt-2 border-t border-stone-200/80 text-stone-700">
-                    <div className="font-semibold text-stone-900 text-[11px]">Core Highlights:</div>
-                    {area.topics.slice(0, 2).map((t, idx) => (
-                      <div key={idx} className="line-clamp-1 text-[11px]">· {t}</div>
+                  <div className="text-xs space-y-1.5 pt-3 border-t border-stone-100 text-stone-600">
+                    <div className="font-bold text-stone-900 text-[11px]">
+                      Core Highlights
+                    </div>
+                    {area.topics.slice(0, 2).map((topic, idx) => (
+                      <div key={idx} className="line-clamp-1 text-[11px]">
+                        <span className="text-[#FF6B16] mr-1">✓</span>
+                        {topic}
+                      </div>
                     ))}
                   </div>
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => openEarlyAccessModal(area.title)}
-                  className="mt-5 w-full py-2.5 text-xs font-semibold text-stone-800 bg-white border border-stone-300 rounded-xl hover:border-[#FF6B16] hover:text-[#FF6B16] transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                  className="mt-5 w-full py-3 text-xs font-bold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Join Waitlist <ArrowRight className="w-3.5 h-3.5" />
+                  Explore Programme
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             ))}
           </div>
 
+          {/* Explore All Programmes */}
           <div className="text-center mt-10">
             <button
+              type="button"
               onClick={() => navigateTo('domains')}
-              className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-semibold text-[#FF6B16] hover:text-orange-700 bg-orange-50/70 hover:bg-orange-100 border border-orange-200 rounded-xl transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-bold text-[#FF6B16] bg-white hover:bg-orange-50 border border-orange-200 hover:border-orange-400 rounded-xl shadow-sm transition-all cursor-pointer"
             >
-              Explore Full Syllabuses for All {FOCUS_AREAS.length} Tracks <ArrowRight className="w-4 h-4" />
+              Explore Full Syllabuses for All {FOCUS_AREAS.length} Tracks
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
       </section>
+
 
       {/* SECTION 3: HOW IT WORKS */}
       <section className="py-20 bg-[#FAF8F5] border-b border-stone-200">
