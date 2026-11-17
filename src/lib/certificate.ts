@@ -107,7 +107,7 @@ export function renderCertificatePDF(data: CertificateRenderData): Buffer {
   doc.setFont('helvetica', 'bolditalic');
   doc.setFontSize(13);
   doc.setTextColor(25, 25, 25);
-  doc.text(data.instructorName || 'Code Mux Academic Mentor', 248, 196.5, { align: 'center' });
+  doc.text(data.instructorName || 'CoDMux Academic Mentor', 248, 196.5, { align: 'center' });
 
   // 5. Mask Serial Number Placeholder
   doc.setFillColor(255, 255, 255);

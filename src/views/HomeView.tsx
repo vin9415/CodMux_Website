@@ -24,6 +24,7 @@ import {
   Globe,
   Award,
   Clock,
+  School,
 } from 'lucide-react';
 
 export const HomeView: React.FC = () => {
@@ -86,7 +87,7 @@ export const HomeView: React.FC = () => {
       <div className="space-y-6 relative z-20">
 
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100 border border-orange-200 text-[#D9570B] text-xs font-bold">
-          <Sparkles className="w-4 h-4" />
+          <School className="w-3.5 h-3.5 text-[#FF6B16]" />
           Learn. Build. Grow with CoDMux.
         </div>
 
