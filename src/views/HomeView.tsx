@@ -85,7 +85,7 @@ export const HomeView: React.FC = () => {
 
               {/* Main Headline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-950 tracking-tight leading-[1.1] font-display">
-                	Your Next Big Thing Starts Here. with{' '}
+                	Your Next Big Thing Starts Here with{' '}
                 <span className="text-[#FF6B16]"> CoDMux </span>
               </h1>
 
