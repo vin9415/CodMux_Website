@@ -29,7 +29,7 @@ export const Footer: React.FC = () => {
             </div>
 
             <p className="text-sm leading-relaxed max-w-sm text-stone-600">
-              Code Mux is an Indian education platform delivering foundational academic mastery in Vedic Maths, English, Hindi, and Young Coding, alongside practical project-centered career programs for college students and graduates.
+              CoDMux is an Indian education platform delivering foundational academic mastery in Vedic Maths, English, Hindi, and Young Coding, alongside practical project-centered career programs for college students and graduates.
             </p>
 
             <div className="text-xs text-stone-500 pt-1">
@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span>contact@codemux.in</span>
+                <span>chatsupport@codmux.com</span>
               </div>
             </div>
           </div>
@@ -203,12 +203,12 @@ export const Footer: React.FC = () => {
         {/* Transparency Notice */}
         <div className="mt-12 pt-6 border-t border-stone-300 text-xs text-stone-500 space-y-3">
           <p className="leading-relaxed">
-            <strong className="text-stone-700">Transparency Notice:</strong> Code Mux is an independent online technology skill-building initiative. Programs and batch schedules are currently in preparation. Placement assistance and interview preparation do not guarantee employment; all hiring decisions remain solely with independent recruiting companies.
+            <strong className="text-stone-700">Transparency Notice:</strong> CoDMux is an independent online technology skill-building initiative. Programs and batch schedules are currently in preparation. Placement assistance and interview preparation do not guarantee employment; all hiring decisions remain solely with independent recruiting companies.
           </p>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-3 border-t border-stone-200 text-stone-500">
             <div>
-              © {new Date().getFullYear()} Code Mux. All rights reserved.
+              © {new Date().getFullYear()} CoDMux. All rights reserved.
             </div>
             <div className="flex items-center gap-4 text-xs">
               <button onClick={() => handleLink('privacy')} className="hover:text-stone-800 cursor-pointer">Privacy</button>

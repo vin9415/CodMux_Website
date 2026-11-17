@@ -26,7 +26,7 @@ export const PlacementsView: React.FC = () => {
             Prepare for the Opportunities Ahead
           </h1>
           <p className="text-sm text-stone-600 leading-relaxed">
-            Code Mux supports students through technical interview preparation, resume reviews, mock interviews, practical capstone projects, and career guidance.
+            CoDMux supports students through technical interview preparation, resume reviews, mock interviews, practical capstone projects, and career guidance.
           </p>
         </div>
 
@@ -34,10 +34,10 @@ export const PlacementsView: React.FC = () => {
         <div className="p-6 rounded-2xl bg-orange-50 border border-orange-200 text-xs sm:text-sm text-orange-950 space-y-2 leading-relaxed shadow-xs">
           <div className="flex items-center gap-2 font-bold text-orange-900">
             <ShieldCheck className="w-5 h-5 text-[#FF6B16]" />
-            Code Mux Placement Assistance &amp; Transparency Policy
+            CoDMux Placement Assistance &amp; Transparency Policy
           </div>
           <p className="text-xs sm:text-sm text-stone-700">
-            Code Mux assists learners through resume audits, coding problem sessions, and mock interviews. <strong>Placement assistance does not constitute a guarantee of employment</strong>. Job opportunities depend on student skills, academic background, employer requirements, and economic conditions. All hiring decisions remain solely at the discretion of prospective recruiting companies.
+            CoDMux assists learners through resume audits, coding problem sessions, and mock interviews. <strong>Placement assistance does not constitute a guarantee of employment</strong>. Job opportunities depend on student skills, academic background, employer requirements, and economic conditions. All hiring decisions remain solely at the discretion of prospective recruiting companies.
           </p>
         </div>
 
@@ -87,7 +87,7 @@ export const PlacementsView: React.FC = () => {
         {/* Detailed Roadmap Box */}
         <div className="p-8 rounded-2xl bg-white border border-stone-200 shadow-xs space-y-6">
           <h3 className="text-xl font-bold text-stone-900 font-display">
-            How Code Mux Prepares You for Technical Hiring
+            How CoDMux Prepares You for Technical Hiring
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-stone-600">
             <div className="space-y-2">

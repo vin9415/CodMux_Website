@@ -3,9 +3,9 @@ import "./globals.css";
 import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "Code Mux - Technology Education & Career Platform",
+  title: "CoDMux - Technology Education & Career Platform",
   description:
-    "Learn coding, web development, data analytics and DSA with Code Mux. Practical project-based training, mentor guidance, and career preparation.",
+   "Learn coding, web development, data analytics and DSA with CoDMux. Practical project-based training, mentor guidance, and career preparation.",
   icons: {
     icon: "/assets/aistudio/codemuxlogo_913c6b11.png",
   },

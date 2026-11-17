@@ -1,3 +1,4 @@
+
 export interface TechnologyFocusArea {
   id: string;
   title: string;
@@ -12,351 +13,375 @@ export interface TechnologyFocusArea {
   targetAudience: 'both' | 'international' | 'indian';
   globalCurriculum?: string;
   timeZoneFriendly?: string;
+
+  // Additional details from the official course catalogue
+  suitableFor: string;
+  level: string;
+  technologies: string;
+  learningOutcomes: string[];
+  practicalWork: string;
+  publishingNote: string;
 }
 
+
+
 export const FOCUS_AREAS: TechnologyFocusArea[] = [
-  // ================= JUNIOR FOUNDATION & ENRICHMENT TRACKS (AGES 5-17) =================
   {
-    id: 'vedic-maths',
-    title: 'Vedic Maths & Speed Mental Arithmetic',
-    category: 'Mathematics & Mental Speed',
+    id: 'frontend-web-development',
+    title: 'Complete Frontend Web Development: HTML, CSS & JavaScript',
+    category: 'Technology | Web Development',
+    ageGroup: 'general',
+    minAge: 0,
+    maxAge: 99,
+    domainTag: 'Frontend Development',
+    badge: '40 Sessions',
+    description:
+      'Build the skills needed to create the part of a website that users see and interact with. Students begin with the structure of a web page, learn how to style it professionally, and then use JavaScript to make it responsive and interactive. The learning path moves from foundational concepts to modern browser features and a complete website project.',
+    suitableFor:
+      'Beginners, school or college students, and aspiring frontend developers.',
+    level:
+      'Beginner to intermediate. The curriculum does not specify an age restriction.',
+    topics: [
+      'HTML document structure, elements, attributes, links, media, forms and semantic HTML.',
+      'CSS selectors, typography, box model, positioning, Flexbox, Grid, transitions and animations.',
+      'Responsive layouts, media queries and advanced CSS selectors.',
+      'JavaScript variables, data types, operators, strings, arrays, conditions, loops, functions and objects.',
+      'DOM manipulation, events, form validation, ES6, modules and JSON.',
+      'Browser storage, Fetch API, asynchronous JavaScript, UI/UX, debugging and deployment basics.',
+    ],
+    technologies:
+      'HTML5, CSS3 and JavaScript. The curriculum also covers DOM APIs, LocalStorage, SessionStorage, Fetch API, Promises and async/await.',
+    learningOutcomes: [
+      'Structure web pages using semantic HTML.',
+      'Create styled layouts and responsive interfaces with CSS.',
+      'Write JavaScript to respond to user actions and update page content.',
+      'Work with browser storage and retrieve external data using Fetch API.',
+      'Debug, test and improve a website before presenting it.',
+    ],
+    practicalWork:
+      'An original responsive website with a designed interface, working navigation or form interactions, dynamic page behaviour and other JavaScript features selected by the student. Students test and present the completed website.',
+    publishingNote:
+      'The catalogue specifies 40 sessions, four assessments and a final project. Calendar duration, session length, instructor, fee and delivery mode are not specified.',
+    targetAudience: 'both',
+  },
+
+  {
+    id: 'python-complete',
+    title: 'Python Programming - Complete Course',
+    category: 'Technology | Programming',
+    ageGroup: 'general',
+    minAge: 0,
+    maxAge: 99,
+    domainTag: 'Complete Python Programming',
+    badge: '40 Sessions',
+    description:
+      'Develop practical Python programming skills through a structured progression. Students learn core syntax and data structures, practise logic through conditions and loops, write reusable functions, work with files and data formats, and explore object-oriented programming. The course then introduces graphics and graphical user interfaces so learners can apply their knowledge in an application.',
+    suitableFor:
+      'Learners who want to progress from Python fundamentals to building small applications.',
+    level:
+      'Progressive beginner-to-advanced coverage; the catalogue does not specify an age or grade range.',
+    topics: [
+      'Python fundamentals: variables, data types, type conversion, operators, strings and collections.',
+      'Input/output, conditions, loops, nested loops, control statements and pattern programming.',
+      'Functions, parameters, return values, scope, built-in methods, lambda functions, map, filter, reduce and recursion.',
+      'File handling, CSV and JSON, exception handling, modules and packages.',
+      'Object-oriented programming: classes, objects, constructors, inheritance, encapsulation and polymorphism.',
+      'Turtle graphics and GUI programming with Tkinter, including widgets, events and dialog boxes.',
+    ],
+    technologies:
+      'Python; CSV and JSON data formats; Python modules and packages; Turtle Graphics; Tkinter.',
+    learningOutcomes: [
+      'Write Python programs using core language features.',
+      'Break problems into functions and reusable modules.',
+      'Read and write files and handle common program errors.',
+      'Apply object-oriented programming concepts.',
+      'Create simple graphics and GUI-based applications.',
+    ],
+    practicalWork:
+      'A Python application planned and developed by the student, with a graphical interface, working program features, appropriate data structures and error handling. The student tests, demonstrates and presents the application.',
+    publishingNote:
+      'The catalogue specifies 40 sessions, four assessments and a final application project. It does not specify learner age, calendar duration or session length.',
+    targetAudience: 'both',
+  },
+
+  {
+    id: 'python-level-1',
+    title: 'Python Level 1 - Fundamentals',
+    category: 'Technology | Programming',
+    ageGroup: 'general',
+    minAge: 0,
+    maxAge: 99,
+    domainTag: 'Python Fundamentals',
+    badge: '30 Sessions',
+    description:
+      'An entry-level course that introduces programming in a clear, practical sequence. Students set up Python, write their first programs, understand how data is stored and processed, and learn to control program flow. They then move into strings and common data structures before practising functions, file handling and introductory object-oriented programming.',
+    suitableFor:
+      'School students and first-time Python learners.',
+    level:
+      'Beginner. The catalogue describes it as suitable for school students but does not give a specific age or grade.',
+    topics: [
+      'Installing Python and setting up an IDE; syntax and first program.',
+      'Variables, data types, input/output, type conversion and operators.',
+      'Conditional statements, nested conditions, for and while loops, and loop-control statements.',
+      'Strings, string methods and slicing.',
+      'Lists, tuples, sets and dictionaries.',
+      'Functions, parameters, return values, scope, lambda functions, modules and libraries.',
+      'File handling, exception handling and introductory OOP.',
+    ],
+    technologies:
+      'Python and a Python IDE. The catalogue does not prescribe a particular IDE.',
+    learningOutcomes: [
+      'Set up a Python programming environment.',
+      'Write programs using variables, operators, conditions and loops.',
+      'Store and manipulate information using Python collections.',
+      'Create functions and use modules.',
+      'Work with files, handle exceptions and understand classes and objects.',
+    ],
+    practicalWork:
+      'Mini projects including a calculator, quiz and number-guessing game, followed by a final Python project and presentation.',
+    publishingNote:
+      'The catalogue specifies 30 sessions. Session length, calendar duration, instructor, fee and delivery mode are not specified.',
+    targetAudience: 'both',
+  },
+
+  {
+    id: 'python-level-2',
+    title: 'Python Level 2 - Intermediate & Advanced',
+    category: 'Technology | Programming',
+    ageGroup: 'general',
+    minAge: 0,
+    maxAge: 99,
+    domainTag: 'Advanced Python & Algorithms',
+    badge: '30 Sessions',
+    description:
+      'Extend Python knowledge into algorithmic thinking and structured problem-solving. Students learn to plan solutions with flowcharts and pseudocode, work with nested data structures, implement searching and sorting methods, and explore recursion and object-oriented programming. The course combines conceptual understanding with algorithm-based practice and a final project.',
+    suitableFor:
+      'School students who have already learned basic Python programming.',
+    level:
+      'Intermediate to advanced; intended for Classes 7-11.',
+    topics: [
+      'Computational thinking, algorithms, flowcharts, pseudocode and algorithm design.',
+      'Advanced conditions, nested loops, number problems and string manipulation.',
+      'Lists, nested lists and two-dimensional lists.',
+      'Linear search, binary search, sorting concepts, bubble sort, selection sort and insertion sort.',
+      'Functions, modular programming, recursion and dictionaries.',
+      'Stacks, queues, mathematical algorithms and number patterns.',
+      'Exception handling, file management and object-oriented programming.',
+      'Classes, constructors, inheritance, polymorphism and selected Python libraries.',
+    ],
+    technologies:
+      'Python; flowcharts and pseudocode; Random, Math and Turtle libraries.',
+    learningOutcomes: [
+      'Design a logical solution before writing code.',
+      'Implement and compare basic searching and sorting algorithms.',
+      'Solve problems using lists, dictionaries, stacks and queues.',
+      'Use recursion and modular functions appropriately.',
+      'Apply OOP concepts and selected Python libraries.',
+    ],
+    practicalWork:
+      'Algorithm-based mini projects and a final Python project that demonstrates computational thinking and programming skills.',
+    publishingNote:
+      'The catalogue specifies 30 sessions and identifies Classes 7-11 as the intended school range. It recommends foundational Python knowledge; formal entry requirements are not specified.',
+    targetAudience: 'both',
+  },
+
+  {
+    id: 'scratchjr',
+    title: 'ScratchJr - Creative Coding for Young Learners',
+    category: 'Technology | Coding for Kids / Visual Programming',
     ageGroup: 'junior',
     minAge: 5,
-    maxAge: 17,
-    domainTag: 'Speed Mental Sutras',
-    badge: 'Popular Across US, UK, UAE & India',
+    maxAge: 8,
+    domainTag: 'Creative Coding for Young Learners',
+    badge: '30 Sessions',
     description:
-      'Ancient Indian Vedic mathematics techniques and rapid mental calculation sutras designed to boost arithmetic speed by 10x, eliminate math anxiety, and excel in competitive school tests and Olympiads worldwide.',
+      'Introduce early coding concepts through playful, visual activities rather than text-based programming. Learners explore characters and backgrounds, arrange visual command blocks, and see how instructions create movement, sound and interaction. As confidence grows, they use these building blocks to tell stories and create simple games.',
+    suitableFor:
+      'Young learners who are beginning to explore coding.',
+    level: 'Beginner; suggested age range 5-8 years.',
     topics: [
-      'Mental Multiplication Sutras (Urdhva Tiryagbhyam & Ekadhikena)',
-      'Lightning Addition, Subtraction & Base Complements',
-      'Instant Square Roots & Cube Roots Without Calculator',
-      'Fraction Simplification & Speed Percentage Tricks',
-      'Math Kangaroo & School Olympiad Calculation Strategies',
+      'ScratchJr interface, tools, characters (sprites) and backgrounds.',
+      'Motion, start/stop triggers, looks and sound blocks.',
+      'Command sequences, events, repeat blocks, speed and movement.',
+      'Character interaction, pages and storytelling.',
+      'Animated stories, mazes, chase games and racing games.',
+      'Problem-solving, debugging and creative project development.',
     ],
-    targetAudience: 'both',
-    globalCurriculum: 'Aligned with CBSE, ICSE, US Common Core & Singapore Math',
-    timeZoneFriendly: 'Dedicated batches for IST, EST, PST, GMT & GST slots',
-  },
-  {
-    id: 'english-junior',
-    title: 'Global English: Public Speaking, Debate & Model UN (MUN)',
-    category: 'Language & Communication',
-    ageGroup: 'junior',
-    minAge: 5,
-    maxAge: 17,
-    domainTag: 'Spoken Fluency & Rhetoric',
-    badge: 'International Communication',
-    description:
-      'Comprehensive English mastery tailored for international schooling and competitions: phonics, impeccable grammar, accent clarity, persuasive debate rhetoric, public speaking, and Model United Nations (MUN) preparation.',
-    topics: [
-      'Phonics, Accent Neutralization & Active Vocabulary Expansion',
-      'Applied Grammar Mastery & Eloquent Sentence Construction',
-      'Speech Delivery, Stage Presence & Confident Public Speaking',
-      'Persuasive Debate Tactics & Model UN (MUN) Resolutions',
-      'Analytical Reading Comprehension & International Essay Writing',
+    technologies:
+      'ScratchJr visual programming environment and its built-in character, background, motion, looks, sound, trigger and repeat blocks.',
+    learningOutcomes: [
+      'Understand that coding instructions are followed in sequence.',
+      'Control characters and change scenes using visual blocks.',
+      'Combine movement, sound and events to create animations.',
+      'Develop early problem-solving and debugging habits.',
+      'Express ideas through interactive stories and games.',
     ],
+    practicalWork:
+      'Animated characters and stories, a moving-car animation, day-and-night and underwater scenes, a simple maze, a character-chase game, a racing game and a final ScratchJr project.',
+    publishingNote:
+      "The catalogue specifies 30 sessions and notes that topics may be adapted to the learner's age, prior knowledge and pace.",
     targetAudience: 'both',
-    globalCurriculum: 'Cambridge English, Oxford Assessment & IB Primary/MYP Aligned',
-    timeZoneFriendly: 'Global weekend and evening time slots',
   },
+
   {
-    id: 'hindi-junior',
-    title: 'Hindi & Sanskrit Heritage: Spoken Fluency & Cultural Literature',
-    category: 'Language & Literature',
-    ageGroup: 'junior',
-    minAge: 5,
-    maxAge: 17,
-    domainTag: 'Devnagari & Heritage Fluency',
-    badge: 'NRI Diaspora & Heritage Choice',
-    description:
-      'Custom-crafted for Indian students and overseas diaspora families seeking deep cultural linguistic roots: Devnagari script writing, pure school vyakaran (grammar), clear conversational Hindi, and Sanskrit shloka chanting.',
-    topics: [
-      'Devnagari Script Reading, Writing & Matra Clarity',
-      'School Vyakaran (Sangnya, Sarvanam, Kriya, Sandhi, Samas & Muhavare)',
-      'Conversational Hindi for Daily Family & Social Fluency',
-      'Sanskrit Shlokas, Meaning & Expressive Recitation',
-      'Creative Hindi Writing (Kahani, Nibandh & Patra Lekhan)',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'Global Heritage Language Framework & CBSE/ICSE Standards',
-    timeZoneFriendly: 'US/Canada EST/PST & UK/Europe GMT convenient slots',
-  },
-  {
-    id: 'junior-coding',
-    title: 'Young Coders: MIT Scratch, Game Design & Creative Python',
-    category: 'Creative STEM & Coding',
-    ageGroup: 'junior',
-    minAge: 6,
-    maxAge: 17,
-    domainTag: 'Creative Coding & Logic',
-    badge: 'Global STEM Benchmark',
-    description:
-      'Engaging, interactive introduction to software engineering. Young learners build 2D arcade games, animated stories, and interactive puzzles using MIT Scratch before advancing into real-world visual Python programming.',
-    topics: [
-      'Visual Block Logic, Sequencing & Conditionals (MIT Scratch 3.0)',
-      'Designing Interactive 2D Arcade Games & Animated Stories',
-      'Python for Kids: Turtle Graphics, Loops, Lists & Functions',
-      'Algorithmic Problem-Solving & Computational Thinking',
-      'Building Shareable Web Minigames & Mini Applications',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'CSTA (Computer Science Teachers Association) & ISTE Standards',
-    timeZoneFriendly: 'Interactive 1:1 and micro-group pods 24/7',
-  },
-  {
-    id: 'robotics-junior',
-    title: 'Robotics, Micro:bit & STEM Automation for Kids',
-    category: 'Robotics & Hardware STEM',
-    ageGroup: 'junior',
-    minAge: 8,
-    maxAge: 17,
-    domainTag: 'Robotics & Sensor Computing',
-    badge: 'Hands-on Hardware & Simulation',
-    description:
-      'Discover electronics and hardware logic without barriers. Students use Tinkercad and virtual micro:bit simulators alongside real-world microcontroller kits to build smart sensor circuits and robotic automation projects.',
-    topics: [
-      'Electronic Circuits, LED Controls & Sensor Interfacing',
-      'BBC micro:bit & Arduino Simulation on Tinkercad',
-      'Block & Python Programming for Hardware Sensors',
-      'Smart Home Automation & Obstacle-Avoiding Robot Logic',
-      'Global Science Fair Project Conceptualization & Prototyping',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'NGSS (Next Generation Science Standards) & STEM Global Framework',
-    timeZoneFriendly: 'Worldwide cohort timings with hardware simulator support',
-  },
-  {
-    id: 'olympiad-math',
-    title: 'International Math Olympiad & Critical Logic Puzzles',
-    category: 'Mathematics & Mental Speed',
+    id: 'scratch-programming',
+    title: 'Scratch Programming - Visual Coding & Game Development',
+    category: 'Technology | Coding for Kids / Game Development',
     ageGroup: 'junior',
     minAge: 7,
-    maxAge: 17,
-    domainTag: 'Olympiad & Non-Routine Math',
-    badge: 'Competitive Edge',
+    maxAge: 14,
+    domainTag: 'Visual Coding & Game Development',
+    badge: '30 Sessions',
     description:
-      'Targeted training for high-achieving math students aiming for top percentiles in international competitions including Math Kangaroo, AMC 8/10, SASMO, and Southeast Asian Math Olympiads.',
+      'Use visual programming to understand how software works. Students create scripts by connecting Scratch blocks and progressively learn programming ideas such as events, sequences, loops, conditions, sensing, variables and operators. They apply these concepts to increasingly complex animations and games, building confidence through experimentation and project work.',
+    suitableFor:
+      'School-age learners interested in coding, animation and making games.',
+    level: 'Beginner to advanced; suggested age range 7-14 years.',
     topics: [
-      'Number Theory & Modular Arithmetic Patterns',
-      'Combinatorics, Permutations & Venn Probability',
-      'Advanced Non-Routine Geometry & Spatial Deduction',
-      'Algebraic Word Problems & Contest Fast-Check Methods',
-      'Timed Mock Contest Drills & Diagnostic Error Analysis',
+      'Scratch interface, stage, sprites, costumes, motion, looks and sound.',
+      'Events, broadcasting, control blocks, sequences and loops.',
+      'If and if-else conditions, sensing and user interaction.',
+      'Variables, scorekeeping, operators, random values and sprite cloning.',
+      'Interactive animations, lists, advanced variables and custom blocks.',
+      'Game projects, debugging and final project presentation.',
     ],
-    targetAudience: 'both',
-    globalCurriculum: 'AMC 8, Math Kangaroo, SASMO & International Olympiad Prep',
-    timeZoneFriendly: 'Weekend intensive masterclasses across all timezones',
-  },
-  {
-    id: 'ai-junior',
-    title: 'AI for Kids: Prompting, Machine Learning & Creative Computing',
-    category: 'Creative STEM & Coding',
-    ageGroup: 'junior',
-    minAge: 9,
-    maxAge: 17,
-    domainTag: 'Kids Artificial Intelligence',
-    badge: 'Next-Gen Future Skills',
-    description:
-      'Demystify artificial intelligence early. Young learners train computer vision and speech recognition models, master safe prompt engineering, create generative digital art, and build interactive intelligent bots.',
-    topics: [
-      'How AI Models Learn: Training Data, Supervised Learning & Vision',
-      'Teachable Machine: Training Custom Image & Audio Classifiers',
-      'Prompt Engineering & Ethical, Safe AI Usage',
-      'Building Interactive Chatbots with Rule-based & Generative AI',
-      'AI Ethics, Deepfake Literacy & Future Tech Careers Overview',
+    technologies:
+      'Scratch visual programming environment, including motion, looks, sound, events, control, sensing, operators, variables, lists and custom blocks.',
+    learningOutcomes: [
+      'Build scripts by combining visual programming blocks.',
+      'Use events, loops and conditions to control project behaviour.',
+      'Store scores and other information using variables and lists.',
+      'Create interactive animations and games.',
+      'Identify and fix errors in a project.',
     ],
+    practicalWork:
+      'Projects include a maze game, catching game, Pong game, space shooter, racing game, quiz game and platformer, followed by a final interactive game.',
+    publishingNote:
+      'The catalogue specifies 30 sessions and notes that topics may be adapted to learner age, prior knowledge and pace.',
     targetAudience: 'both',
-    globalCurriculum: 'AI4K12 Guidelines & Global Digital Citizenship Standards',
-    timeZoneFriendly: 'Global cohort scheduling with 1:1 mentor assistance',
   },
 
-  // ================= UNIVERSITY, GRADUATE & TECH CAREER TRACKS (AGES 18+) =================
   {
-    id: 'webdev',
-    title: 'Full-Stack Web & Cloud Engineering (React, Node & AWS)',
-    category: 'Software Engineering',
-    ageGroup: 'career',
-    minAge: 18,
-    maxAge: 99,
-    domainTag: 'Full-Stack Production Track',
-    badge: 'High Global Remote Demand',
-    description:
-      'End-to-end production engineering for global tech roles. Master modern React, Next.js, Node.js, Express, PostgreSQL/MongoDB, Docker containers, and AWS cloud deployment with production-grade architecture.',
-    topics: [
-      'Modern TypeScript, React 19 & Next.js App Router',
-      'Scalable Backend APIs (Express, NestJS, REST & GraphQL)',
-      'Relational & NoSQL Databases (PostgreSQL, Redis & MongoDB)',
-      'Docker Containerization, CI/CD Pipelines & AWS Deployment',
-      'Authentication (JWT, OAuth), WebSockets & System Resilience',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'Global Industry Engineering Bar (US/EU/APAC/India Tech Hubs)',
-    timeZoneFriendly: 'Flexible live lectures with 24/7 code review portal',
-  },
-  {
-    id: 'ai-engineering',
-    title: 'Applied Generative AI, LLMs & Autonomous Agents',
-    category: 'Programming & AI',
-    ageGroup: 'career',
-    minAge: 18,
-    maxAge: 99,
-    domainTag: 'Frontier GenAI & LLMs',
-    badge: 'Frontier Tech Track',
-    description:
-      'Build real-world production AI applications. Learn Retrieval-Augmented Generation (RAG), vector embeddings, LangChain, LlamaIndex, multi-agent frameworks, and multimodal API integration.',
-    topics: [
-      'LLM APIs, Structured JSON Outputs & System Prompts',
-      'Vector Databases (Chroma, Pinecone) & Enterprise RAG Pipelines',
-      'LangChain, LangGraph & Autonomous Multi-Agent Workflows',
-      'Fine-Tuning, Quantization & Open-Source LLMs (Llama, Mistral)',
-      'Evaluation, Guardrails & Production AI Deployment at Scale',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'Frontier Silicon Valley & Global AI Engineering Practices',
-    timeZoneFriendly: 'Accommodating working professionals across US, Europe & India',
-  },
-  {
-    id: 'data',
-    title: 'Data Analytics & Global Business Intelligence (Power BI & Tableau)',
-    category: 'Data & Analytics',
-    ageGroup: 'career',
-    minAge: 18,
-    maxAge: 99,
-    domainTag: 'Business Analytics & BI',
-    badge: 'Enterprise In-Demand',
-    description:
-      'Transform corporate enterprise data into strategic decisions. Master advanced multi-table SQL querying, Python analytical modeling (Pandas/NumPy), executive dashboards in Tableau/Power BI, and executive storytelling.',
-    topics: [
-      'Advanced SQL (Window Functions, CTEs, Recursive Queries, Tuning)',
-      'Python Data Wrangling & Statistical Exploratory Analysis',
-      'Executive Dashboards in Microsoft Power BI & Tableau',
-      'Business KPI Modeling (CAC, LTV, Retention, ARR, Churn)',
-      'Automated Reporting Pipelines & Executive Presentation',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'Global Management Consulting & Enterprise BI Standards',
-    timeZoneFriendly: 'Weekend cohorts & asynchronous mentor office hours',
-  },
-  {
-    id: 'placement',
-    title: 'Global Tech Career, LeetCode DSA & Remote Interview Mastery',
-    category: 'Career Development',
-    ageGroup: 'career',
-    minAge: 18,
-    maxAge: 99,
-    domainTag: 'FAANG & Global Remote Prep',
-    badge: 'Career Acceleration',
-    description:
-      'Land engineering roles at top MNCs, unicorn startups, and high-paying global remote companies. Rigorous algorithmic patterns, large-scale System Design, mock interviews, and ATS-optimized global resumes.',
-    topics: [
-      '150 High-Frequency LeetCode Patterns (Trees, Graphs, DP, Intervals)',
-      'High-Level & Low-Level System Design for Distributed Scale',
-      'Behavioral Interviews & Leadership Principles (STAR Method)',
-      'ATS-Optimized Engineering Resume & Global LinkedIn Positioning',
-      '1-on-1 Mock Interviews with Senior Industry Mentors',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'FAANG, Top Tier Product Firms & Global Remote Hiring Bars',
-    timeZoneFriendly: 'Personalized 1-on-1 mock interview time slots worldwide',
-  },
-  {
-    id: 'cybersecurity',
-    title: 'Cybersecurity & Ethical Defense Fundamentals',
-    category: 'Software Engineering',
-    ageGroup: 'career',
-    minAge: 18,
-    maxAge: 99,
-    domainTag: 'Security & Ethical Hacking',
-    badge: 'Critical Infrastructure Track',
-    description:
-      'Protect applications and networks from modern threats. Covers penetration testing fundamentals, OWASP Top 10 web vulnerabilities, cryptography, network packet forensics, and cloud security defense.',
-    topics: [
-      'Network Security Protocols, Wireshark & Packet Inspection',
-      'OWASP Top 10 Web Exploits & Secure Coding Defense',
-      'Vulnerability Scanning, Burp Suite & Ethical Penetration Basics',
-      'Cryptography Fundamentals (Symmetric, Asymmetric & Hashing)',
-      'Cloud Security Posture & Compliance Frameworks (SOC2, ISO 27001)',
-    ],
-    targetAudience: 'both',
-    globalCurriculum: 'CompTIA Security+, CEH & OWASP Industry Standards',
-    timeZoneFriendly: 'Global hands-on virtual lab environments',
-  },
-
-  // ================= GENERAL / UNIVERSAL COGNITIVE TRACKS (ALL AGES) =================
-  {
-    id: 'digital-ethics',
-    title: 'Digital Fluency, Cyber Safety & Critical Logic',
-    category: 'General & Universal',
+    id: 'english-language',
+    title: 'English Language Skills - Grade-wise Learning Programme',
+    category: 'School Education | English Language',
     ageGroup: 'general',
-    minAge: 8,
+    minAge: 0,
     maxAge: 99,
-    domainTag: 'Universal Digital Skills',
-    badge: 'Universal Lifelong Skill',
+    domainTag: 'English Language Skills',
     description:
-      'Essential digital intelligence for the modern world: online privacy protection, evaluating news vs misinformation, safe password and identity hygiene, and ethical technology habits for learners of any age.',
+      'A broad English programme designed to strengthen communication and literacy across school years. It develops accuracy in grammar, confidence in speaking and listening, reading fluency and comprehension, and the ability to write for different purposes. Vocabulary, spelling, literature and academic study skills are integrated so learners can understand texts, express ideas clearly and become more independent in their learning.',
+    suitableFor:
+      'School learners in the United States and United Kingdom, with lessons adapted to their age, ability and school expectations.',
+    level:
+      'Grades 1-12. Placement should consider demonstrated ability, not grade or age alone.',
     topics: [
-      'Digital Footprint Awareness & Online Privacy Shielding',
-      'Media Literacy: Spotting Deepfakes, Scams & Misinformation',
-      'Password Security, 2FA & Account Protection Habits',
-      'Healthy Screen Time, Ergonomics & Digital Focus Management',
-      'Critical Thinking & Logic Formulation in the AI Age',
+      'Grammar and sentence structure: parts of speech, sentence types, agreement, verb tenses, clauses, punctuation and reported speech.',
+      'Reading and comprehension: phonics and decoding at early levels, fluency, sequencing, inference, main ideas, text evidence and critical reading.',
+      'Writing and composition: sentences, paragraphs, narratives, descriptive, informative, persuasive and research-based writing.',
+      'Speaking, listening and communication: pronunciation, conversation, storytelling, discussion, presentations, debates and interviews.',
+      'Vocabulary and spelling: word relationships, prefixes, suffixes, spelling patterns, idioms and precise word choice.',
+      'Literature and language techniques: stories, novels, plays, poetry, character, plot, theme and figurative language.',
+      'Study and academic skills: note-taking, summarising, research, source evaluation and academic integrity.',
     ],
+    technologies:
+      'English-language teaching materials and age-appropriate reference resources. The catalogue does not prescribe a particular software platform or digital tool.',
+    learningOutcomes: [
+      'Use grammar and sentence structures accurately in speech and writing.',
+      'Read a range of texts with increasing fluency and understanding.',
+      'Plan, draft, revise and edit different forms of writing.',
+      'Speak clearly, listen actively and contribute to discussions.',
+      'Build vocabulary, spelling and understanding of literary techniques.',
+      'Develop independent study, research and presentation skills.',
+    ],
+    practicalWork:
+      'Learner work may include written compositions, reading responses, vocabulary records, spoken presentations, book reviews, reports and research-based writing. The framework does not prescribe one single final software or construction project.',
+    publishingNote:
+      'The catalogue is a planning framework for Grades 1-12, not a mandatory national syllabus. US and UK frameworks differ by jurisdiction. Map the programme to the relevant local curriculum before claiming official alignment. The source recommends a short reading, writing, grammar and speaking assessment for placement.',
     targetAudience: 'both',
-    globalCurriculum: 'UNESCO Digital Literacy & Global Digital Citizenship Standards',
-    timeZoneFriendly: 'Open access global self-paced modules + weekly live discussions',
+  },
+
+  {
+    id: 'mathematics',
+    title: 'Mathematics - Kindergarten to Grade 10',
+    category: 'School Education | Mathematics',
+    ageGroup: 'general',
+    minAge: 0,
+    maxAge: 99,
+    domainTag: 'Mathematics Learning Programme',
+    description:
+      'A progressive mathematics framework that develops understanding from early number concepts to secondary-level mathematical reasoning. Learners build fluency with calculations and number relationships, then extend their skills through fractions, decimals, percentages, algebra, geometry, measurement, statistics and probability. Practical applications and multi-step problems help students connect mathematical ideas to real situations.',
+    suitableFor:
+      'Kindergarten and school learners following a grade-based mathematics programme.',
+    level: 'Kindergarten (KG) through Grade 10.',
+    topics: [
+      'Early mathematics: counting, number recognition, comparing quantities, basic operations, shapes, patterns, sorting, measurement, time and direction.',
+      'Number sense and arithmetic: place value, rounding, estimation, four operations, factors, multiples, fractions, decimals and percentages.',
+      'Ratio, proportion, rates, integers, powers, roots and financial mathematics.',
+      'Algebra: expressions, equations, inequalities, polynomials, identities, factorisation, functions and graphs.',
+      'Geometry: shapes, lines, angles, triangles, quadrilaterals, circles, coordinates, transformations and trigonometry.',
+      'Measurement and mensuration: perimeter, area, circumference, surface area, volume, unit conversion, speed and time.',
+      'Data and reasoning: tables, graphs, averages, statistics, probability, mathematical modelling and multi-step problem-solving.',
+    ],
+    technologies:
+      'Mathematics teaching resources and practice materials. The catalogue does not specify a particular calculator, application, coding language or digital learning platform.',
+    learningOutcomes: [
+      'Develop number sense and accurate calculation strategies.',
+      'Understand fractions, decimals, percentages, ratios and proportional reasoning.',
+      'Use algebraic methods to represent and solve problems.',
+      'Apply geometric concepts and measurement formulas.',
+      'Interpret data and reason about probability.',
+      'Use logical reasoning and mathematical modelling in practical contexts.',
+    ],
+    practicalWork:
+      'Grade-appropriate worked solutions, problem sets, mathematical models, data charts and applied problem-solving tasks. The syllabus does not define one single final project.',
+    publishingNote:
+      'The catalogue is an international planning framework drawing on commonly taught areas across Cambridge, the UK National Curriculum and US Common Core. Topic sequence and depth must be adapted to the selected curriculum, school year and learner needs. Do not claim formal alignment without a separate curriculum mapping review.',
+    targetAudience: 'both',
   },
 ];
 
+
+
 export const FAQ_ITEMS = [
   {
-    question: 'What is Code Mux?',
+    question: 'What is CoDMux?',
     answer:
-      'Code Mux is an Indian education platform delivering personalized dual-track learning: the Junior Foundation Academy for school students in Vedic Maths, English, Hindi, and Young Coding, alongside Career & Technical Specializations for college students and graduates.',
+      'CoDMux provides structured learning programmes in frontend web development, Python programming, Scratch coding, English language skills and mathematics.',
   },
   {
-    question: 'Who is Code Mux for?',
+    question: 'Which courses are available?',
     answer:
-      'Code Mux serves two dedicated cohorts: 1) School learners looking to build mastery in Vedic Maths, English communication, Hindi vyakaran, and creative coding, and 2) College students, engineering graduates, and job seekers aiming for practical tech skills and placement readiness.',
+      'Our current catalogue includes Complete Frontend Web Development, Python Programming Complete Course, Python Level 1, Python Level 2, ScratchJr, Scratch Programming, English Language Skills and Mathematics.',
   },
   {
-    question: 'What domains does Code Mux teach for school students?',
+    question: 'Are the courses suitable for beginners?',
     answer:
-      'For school students, we offer structured tracks in Vedic Maths & Speed Mental Arithmetic, English Grammar & Spoken Fluency, Hindi Vyakaran, Sahitya & Conversational Fluency, and Young Coders (MIT Scratch & Python for Kids).',
+      'Yes. The catalogue includes beginner-level programmes as well as intermediate and advanced learning paths. Please check the individual course level and suitability details.',
   },
   {
-    question: 'What domains does Code Mux cover for college students and graduates?',
+    question: 'What will students learn?',
     answer:
-      'For college students and graduates, our primary focus areas include Full-Stack Web Development, Data Analytics & BI, Python Programming & AI Fundamentals, and Placement Preparation.',
+      'Students learn through structured topics, practical exercises, projects and learning outcomes specified in each course curriculum.',
   },
   {
-    question: 'Are curriculums and batch dates decided yet?',
+    question: 'How many sessions are included?',
     answer:
-      'Our curriculums and batch schedules are currently in preparation. You can register your interest through our Early Access / Waitlist form to receive official announcements once finalized.',
+      'Session counts differ by course. The current catalogue specifies 40 sessions for the complete frontend course and complete Python course, and 30 sessions for Python Level 1, Python Level 2, ScratchJr and Scratch Programming. Session counts for English and Mathematics are not specified.',
   },
   {
-    question: 'What is the course fee structure?',
+    question: 'What are the course fees?',
     answer:
-      'Course fees have not been finalized yet. Code Mux is committed to keeping programs accessible and affordable for Indian families and students. Exact pricing will be announced alongside the launch of batch schedules.',
+      'Course fees have not been specified in the current catalogue. Please contact CoDMux for confirmed pricing.',
   },
   {
-    question: 'Does Code Mux provide placement assistance for career tracks?',
+    question: 'Are instructors and batch schedules confirmed?',
     answer:
-      'Yes, for career programs Code Mux plans to support learners through resume formulation, DSA problem-solving sessions, technical mock interviews, and career guidance.',
+      'Instructor names, calendar duration, session timings and delivery mode must be confirmed separately before publishing.',
   },
   {
-    question: 'Are jobs guaranteed by Code Mux?',
+    question: 'How can I register my interest?',
     answer:
-      'No. We adhere to complete honesty: Code Mux does not claim or promise job guarantees. Placement outcomes depend on individual student dedication, skills, and independent employer hiring criteria.',
-  },
-  {
-    question: 'How will programs be delivered across foundational and career tracks?',
-    answer:
-      'Programs will be conducted online, featuring interactive live mentor-led sessions, engaging hands-on interactive activities, recorded materials, and practical assignment feedback.',
-  },
-  {
-    question: 'How can I stay updated or register my child / self?',
-    answer:
-      'You can join our early notification list on this site or email us at contact@codemux.in. We will notify you as soon as official dates and details are released.',
+      'Select your preferred course and use the registration or notification option on the website. Our team can follow up with confirmed programme details.',
   },
 ];

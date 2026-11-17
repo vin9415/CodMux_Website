@@ -108,7 +108,7 @@ export const CertificateVerificationView: React.FC = () => {
         </h1>
 
         <p className="text-sm text-stone-600 leading-relaxed">
-          Verify the authenticity of certificates issued by Code Mux. Enter the unique certificate identification number below to validate the credential against our permanent registry.
+          Verify the authenticity of certificates issued by CoDMux. Enter the unique certificate identification number below to validate the credential against our permanent registry.
         </p>
       </div>
 
@@ -193,7 +193,7 @@ export const CertificateVerificationView: React.FC = () => {
                       ✓ CERTIFICATE VERIFIED
                     </h2>
                     <p className="text-xs text-emerald-100 font-medium">
-                      Authentic credential officially issued and recognized by Code Mux
+                      Authentic credential officially issued and recognized by CoDMux
                     </p>
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export const CertificateVerificationView: React.FC = () => {
                   <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-stone-200 space-y-1">
                     <span className="text-[10px] text-stone-500 uppercase font-bold block">Issuing Organization</span>
                     <span className="text-sm font-bold text-stone-900 block">
-                      Code Mux
+                      CoDMux
                     </span>
                     <span className="text-[10px] text-stone-500">
                       Educational &amp; Placement Platform
@@ -304,7 +304,7 @@ export const CertificateVerificationView: React.FC = () => {
                   Certificate Revoked
                 </h2>
                 <p className="text-xs text-rose-800 font-semibold mt-1">
-                  This certificate is no longer valid. Please contact Code Mux for further information.
+                  This certificate is no longer valid. Please contact CoDMux for further information.
                 </p>
               </div>
 

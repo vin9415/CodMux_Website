@@ -217,7 +217,7 @@ export const AdminPortalView: React.FC = () => {
       slidesCount: Number(pptSlides) || 30,
       fileType: pptType,
       downloadOrViewUrl: pptUrl,
-      description: 'Official Code Mux Curriculum Slide Deck',
+      description: 'Official CoDMux Curriculum Slide Deck',
       uploadedBy: 'Admin Console',
     });
     setIsAddPptOpen(false);

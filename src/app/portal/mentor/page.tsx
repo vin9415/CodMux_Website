@@ -18,7 +18,7 @@ export default function MentorPortalPage() {
           </div>
           <h2 className="text-xl font-bold text-stone-900 font-display">Mentor Portal Authorization Required</h2>
           <p className="text-xs text-stone-500">
-            This workspace is reserved for authorized Code Mux faculty and instructors to manage cohort sessions, mark student attendance, and evaluate project deliverables.
+            This workspace is reserved for authorized CoDMux faculty and instructors to manage cohort sessions, mark student attendance, and evaluate project deliverables.
           </p>
           <Link
             href="/login"

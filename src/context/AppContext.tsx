@@ -1033,7 +1033,7 @@ const INITIAL_SYLLABUS: SyllabusTrack[] = [
           'Formal letter writing and email etiquette for school and competitions',
           'Structuring persuasive opinion essays with evidence and flow',
         ],
-        handsOnLab: 'Publish an illustrated original storybook in the Code Mux student library.',
+        handsOnLab: 'Publish an illustrated original storybook in the CoDMux student library.',
       },
     ],
   },
@@ -1164,7 +1164,7 @@ const INITIAL_SYLLABUS: SyllabusTrack[] = [
 const INITIAL_ANNOUNCEMENTS: Announcement[] = [
   {
     id: 'ann-1',
-    title: 'Code Mux Platform Live Cohort Schedule Released',
+    title: 'CoDMux Platform Live Cohort Schedule Released',
     content: 'Check the timetable tab for live session timings, meeting rooms, and slide decks for this week.',
     targetRole: 'all',
     date: '2026-10-29',
@@ -1192,7 +1192,7 @@ const INITIAL_AUDIT_LOGS: SystemAuditLog[] = [
     actor: 'Admin Console',
     role: 'Admin',
     action: 'SYSTEM_STARTUP',
-    details: 'Code Mux educational platform synchronized with full role portals',
+    details: 'CoDMux educational platform synchronized with full role portals',
   },
   {
     id: 'log-2',
@@ -1561,7 +1561,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     setCurrentUser(user);
     logAudit(user.name, user.role.toUpperCase(), 'USER_LOGIN', `Logged in as ${user.role} (${user.email})`);
-    addToast('success', `Welcome back, ${user.name}!`, `Signed in to Code Mux ${user.role} portal.`);
+    addToast('success', `Welcome back, ${user.name}!`, `Signed in to CoDMux ${user.role} portal.`);
 
     if (user.role === 'admin') {
       navigateTo('admin-portal');
@@ -1604,7 +1604,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setUsersList((prev) => [...prev, user]);
     setCurrentUser(user);
     logAudit(name, 'STUDENT', 'STUDENT_REGISTER', `New student registered for ${interest}`);
-    addToast('success', 'Account Created!', `Welcome to Code Mux, ${name}!`);
+    addToast('success', 'Account Created!', `Welcome to CoDMux, ${name}!`);
     navigateTo('student-portal');
     return true;
   };
@@ -1975,7 +1975,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     addToast(
       'success',
       'Message Received',
-      'Thank you for contacting Code Mux. We will reply to your email within 24 business hours.'
+      'Thank you for contacting CoDMux. We will reply to your email within 24 business hours.'
     );
   };
 

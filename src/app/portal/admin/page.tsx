@@ -18,7 +18,7 @@ export default function AdminPortalPage() {
           </div>
           <h2 className="text-xl font-bold text-stone-900 font-display">Administrator Access Required</h2>
           <p className="text-xs text-stone-500">
-            This console is strictly restricted to Code Mux system administrators for user operations, certificate management, cohort timetables, and platform leads.
+            This console is strictly restricted to CoDMux system administrators for user operations, certificate management, cohort timetables, and platform leads.
           </p>
           <Link
             href="/login"

@@ -47,7 +47,7 @@ export const Navbar: React.FC = () => {
           />
           <div className="flex flex-col">
             <span className="text-xl font-bold tracking-tight text-stone-900 whitespace-nowrap font-display">
-              Code <span className="text-[#FF6B16]">Mux</span>
+              CoD<span className="text-[#FF6B16]">Mux</span>
             </span>
           </div>
         </button>

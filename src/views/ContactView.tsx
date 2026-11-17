@@ -106,7 +106,7 @@ export const ContactView: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-stone-900 font-semibold">Email Admissions Desk</div>
-                    <div className="text-stone-600 mt-0.5">contact@codemux.in</div>
+                    <div className="text-stone-600 mt-0.5">chatsupport@codmux.com</div>
                     <div className="text-[11px] text-stone-500 mt-0.5">Response within 24 business hours</div>
                   </div>
                 </div>
@@ -135,7 +135,7 @@ export const ContactView: React.FC = () => {
               </div>
 
               <div className="pt-4 border-t border-stone-100 text-xs text-stone-500 leading-relaxed">
-                Code Mux does not maintain unverified physical storefronts. All admissions counseling and technical batch orientations occur securely online.
+                CodMux does not maintain unverified physical storefronts. All admissions counseling and technical batch orientations occur securely online.
               </div>
             </div>
           </div>
@@ -294,7 +294,7 @@ export const ContactView: React.FC = () => {
                       className="mt-0.5 rounded border-stone-300 text-[#FF6B16] focus:ring-[#FF6B16]"
                     />
                     <label htmlFor="contactConsent" className="text-[11px] text-stone-600 leading-tight">
-                      I consent to Code Mux responding to my inquiry via email regarding course schedules and batch information.
+                      I consent to CoDMux responding to my inquiry via email regarding course schedules and batch information.
                     </label>
                   </div>
 

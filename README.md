@@ -1,6 +1,6 @@
 # Code Mux - Next.js Production Platform
 
-Production-ready Next.js 15/16 full-stack migration for Code Mux (codemux.in), backed by PostgreSQL and Prisma ORM.
+Production-ready Next.js 15/16 full-stack migration for CoDMux (codmux.Online), backed by PostgreSQL and Prisma ORM.
 
 ## Tech Stack
 - **Framework**: Next.js (App Router, Turbopack, TypeScript)

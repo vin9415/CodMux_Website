@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding initial Code Mux database...');
+  console.log('Seeding initial CoDMux database...');
 
   const defaultPasswordHash = await bcrypt.hash('Password@123', 10);
   const adminPasswordHash = await bcrypt.hash('Admin@123456', 10);

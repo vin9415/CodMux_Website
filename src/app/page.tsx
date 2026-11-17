@@ -31,7 +31,7 @@ const AccessRestrictedView: React.FC<{ requiredRole: string }> = ({ requiredRole
         </div>
         <h2 className="text-xl font-bold text-stone-900 font-display">Access Restricted &amp; Protected</h2>
         <p className="text-xs text-stone-500">
-          This workspace contains protected Code Mux engineering resources. Only authorized {requiredRole}s may access this view.
+          This workspace contains protected CoDMux engineering resources. Only authorized {requiredRole}s may access this view.
         </p>
         <button
           onClick={() => navigateTo('login')}

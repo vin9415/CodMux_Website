@@ -1,74 +1,60 @@
+
 'use client';
+
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { FOCUS_AREAS, TechnologyFocusArea } from '../data/initialData';
+
 import {
   Code,
-  Layers,
   Terminal,
-  Cpu,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
   Calculator,
   BookOpen,
-  Languages,
   Gamepad2,
   GraduationCap,
-  Briefcase,
   Search,
   RotateCcw,
   Globe,
-  Award,
-  ShieldCheck,
-  Clock,
-  Filter,
+  Briefcase,
+  Layers,
 } from 'lucide-react';
 
 export const FocusAreasView: React.FC = () => {
   const { openEarlyAccessModal } = useApp();
+
   const [selectedAge, setSelectedAge] = useState<number | null>(null);
-  const [ageInputVal, setAgeInputVal] = useState<string>('');
-  
-  // Filter mode when age is applied: 'relatable_all' (relatable + general) or 'exact' (strictly minAge-maxAge)
-  const [ageFilterMode, setAgeFilterMode] = useState<'relatable_all' | 'exact'>('relatable_all');
+  const [ageInputVal, setAgeInputVal] = useState('');
+  const [ageFilterMode, setAgeFilterMode] =
+    useState<'relatable_all' | 'exact'>('relatable_all');
 
-  // Category fallback if NO age selected
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'junior' | 'career' | 'general'>('all');
+  const [categoryFilter, setCategoryFilter] =
+    useState<'all' | 'junior' | 'career' | 'general'>('all');
 
-  // Audience targeting filter: 'all' (both Indian & International), 'international', 'indian'
-  const [audienceFilter, setAudienceFilter] = useState<'all' | 'international' | 'indian'>('all');
-
+  // Course icons
   const getIcon = (id: string) => {
     switch (id) {
-      case 'vedic-maths':
-        return <Calculator className="w-6 h-6 text-[#FF6B16]" />;
-      case 'english-junior':
-        return <BookOpen className="w-6 h-6 text-amber-700" />;
-      case 'hindi-junior':
-        return <Languages className="w-6 h-6 text-[#FF6B16]" />;
-      case 'junior-coding':
-        return <Gamepad2 className="w-6 h-6 text-emerald-700" />;
-      case 'robotics-junior':
-        return <Cpu className="w-6 h-6 text-blue-600" />;
-      case 'olympiad-math':
-        return <Award className="w-6 h-6 text-amber-600" />;
-      case 'ai-junior':
-        return <Sparkles className="w-6 h-6 text-purple-600" />;
-      case 'webdev':
+      case 'frontend-web-development':
         return <Code className="w-6 h-6 text-[#FF6B16]" />;
-      case 'ai-engineering':
+
+      case 'python-complete':
+      case 'python-level-1':
+      case 'python-level-2':
         return <Terminal className="w-6 h-6 text-purple-700" />;
-      case 'data':
-        return <Layers className="w-6 h-6 text-amber-700" />;
-      case 'placement':
-        return <Briefcase className="w-6 h-6 text-emerald-700" />;
-      case 'cybersecurity':
-        return <ShieldCheck className="w-6 h-6 text-rose-600" />;
-      case 'digital-ethics':
-        return <Globe className="w-6 h-6 text-teal-600" />;
+
+      case 'scratchjr':
+      case 'scratch-programming':
+        return <Gamepad2 className="w-6 h-6 text-emerald-700" />;
+
+      case 'english-language':
+        return <BookOpen className="w-6 h-6 text-blue-700" />;
+
+      case 'mathematics':
+        return <Calculator className="w-6 h-6 text-amber-700" />;
+
       default:
-        return <Sparkles className="w-6 h-6 text-[#FF6B16]" />;
+        return <Layers className="w-6 h-6 text-[#FF6B16]" />;
     }
   };
 
@@ -78,13 +64,15 @@ export const FocusAreasView: React.FC = () => {
     setAgeFilterMode('relatable_all');
   };
 
-  const handleInputChange = (val: string) => {
-    setAgeInputVal(val);
-    const num = parseInt(val, 10);
-    if (!isNaN(num) && num > 0 && num < 100) {
-      setSelectedAge(num);
+  const handleInputChange = (value: string) => {
+    setAgeInputVal(value);
+
+    const age = parseInt(value, 10);
+
+    if (!isNaN(age) && age > 0 && age < 100) {
+      setSelectedAge(age);
       setAgeFilterMode('relatable_all');
-    } else if (val.trim() === '') {
+    } else if (value.trim() === '') {
       setSelectedAge(null);
     }
   };
@@ -92,425 +80,434 @@ export const FocusAreasView: React.FC = () => {
   const handleClearAge = () => {
     setSelectedAge(null);
     setAgeInputVal('');
+    setCategoryFilter('all');
   };
 
-  // CORE REQUIREMENT:
-  // If an age is applied and user views "Show All", it MUST only show tracks relatable to that age group (or general).
-  // Under 18: shows junior + general tracks (NEVER adult career tracks).
-  // 18+: shows career + general tracks (NEVER junior school tracks).
-  const filteredAreas = FOCUS_AREAS.filter((area: TechnologyFocusArea) => {
-    // 1. Audience filter check
-    if (audienceFilter !== 'all') {
-      if (area.targetAudience !== 'both' && area.targetAudience !== audienceFilter) {
-        return false;
+  // Course filtering
+  const filteredAreas = FOCUS_AREAS.filter(
+    (area: TechnologyFocusArea) => {
+      if (selectedAge !== null) {
+        if (ageFilterMode === 'exact') {
+          return (
+            selectedAge >= area.minAge &&
+            selectedAge <= area.maxAge
+          );
+        }
+
+        if (selectedAge < 18) {
+          return (
+            area.ageGroup === 'junior' ||
+            area.ageGroup === 'general'
+          );
+        }
+
+        return (
+          area.ageGroup === 'career' ||
+          area.ageGroup === 'general'
+        );
       }
+
+      if (categoryFilter === 'all') return true;
+
+      return area.ageGroup === categoryFilter;
     }
-
-    // 2. Age-based filtering
-    if (selectedAge !== null) {
-      const isKid = selectedAge < 18;
-      
-      if (ageFilterMode === 'exact') {
-        // Strict age range matching
-        return selectedAge >= area.minAge && selectedAge <= area.maxAge;
-      }
-
-      // 'relatable_all': SHOW ALL tracks relatable to this age stage + general tracks
-      if (isKid) {
-        return area.ageGroup === 'junior' || area.ageGroup === 'general';
-      } else {
-        return area.ageGroup === 'career' || area.ageGroup === 'general';
-      }
-    }
-
-    // 3. Fallback when no age is selected
-    if (categoryFilter === 'all') return true;
-    return area.ageGroup === categoryFilter;
-  });
+  );
 
   const quickAges = [7, 10, 13, 16, 18, 21];
 
-  const activeAgeRelatableCount = selectedAge !== null
-    ? FOCUS_AREAS.filter((a) => (selectedAge < 18 ? a.ageGroup === 'junior' || a.ageGroup === 'general' : a.ageGroup === 'career' || a.ageGroup === 'general')).length
-    : FOCUS_AREAS.length;
+  const activeAgeRelatableCount =
+    selectedAge !== null
+      ? FOCUS_AREAS.filter((area) =>
+          selectedAge < 18
+            ? area.ageGroup === 'junior' ||
+              area.ageGroup === 'general'
+            : area.ageGroup === 'career' ||
+              area.ageGroup === 'general'
+        ).length
+      : FOCUS_AREAS.length;
 
-  const activeAgeExactCount = selectedAge !== null
-    ? FOCUS_AREAS.filter((a) => selectedAge >= a.minAge && selectedAge <= a.maxAge).length
-    : FOCUS_AREAS.length;
+  const activeAgeExactCount =
+    selectedAge !== null
+      ? FOCUS_AREAS.filter(
+          (area) =>
+            selectedAge >= area.minAge &&
+            selectedAge <= area.maxAge
+        ).length
+      : FOCUS_AREAS.length;
 
   return (
     <div className="w-full py-12 sm:py-16 bg-[#FAF8F5] min-h-screen">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        {/* Header */}
+
+        {/* PAGE HEADER */}
         <div className="max-w-3xl space-y-3">
+
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100/70 border border-orange-200 text-[#FF6B16] text-xs font-semibold uppercase tracking-wider">
-            <Globe className="w-3.5 h-3.5" /> Indian &amp; International Student Curriculums
+            <Globe className="w-3.5 h-3.5" />
+            Our Official Course Catalogue
           </div>
+
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-stone-900 font-display">
-            Global Learning Tracks &amp; Relatable Domains
+            Explore Our Courses
           </h1>
+
           <p className="text-sm sm:text-base text-stone-600 leading-relaxed">
-            Personalized academic and technology tracks engineered for learners in India and worldwide (US, UK, UAE, Canada, Singapore). Programs are structured by cognitive development, offering live mentor-led cohorts aligned with international and Indian educational boards.
+            Explore our learning programmes in frontend web development,
+            Python programming, Scratch coding, English language and
+            mathematics. Discover course topics, technologies,
+            learning outcomes and practical activities.
           </p>
 
-          {/* International & Indian Audience Highlights Bar */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 text-xs">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 font-medium">
-              <Globe className="w-3.5 h-3.5" /> Global Curriculums: CBSE, ICSE, Cambridge IGCSE, IB &amp; US Common Core
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 font-medium">
-              <Clock className="w-3.5 h-3.5" /> International Time Zones (IST, EST, PST, GMT, GST)
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-orange-50 text-orange-800 border border-orange-200 font-medium">
-              <Award className="w-3.5 h-3.5" /> Global Certification &amp; Olympiad Readiness
-            </span>
+          <div className="text-sm font-semibold text-[#FF6B16]">
+            {FOCUS_AREAS.length} Courses Available
           </div>
         </div>
 
-        {/* INTERACTIVE AGE FINDER: Ask Age First */}
+        {/* AGE FINDER */}
         <div className="p-6 sm:p-7 rounded-2xl bg-white border border-orange-200 shadow-md space-y-5">
+
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-stone-100">
+
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#FF6B16] uppercase tracking-wider mb-1">
-                <Search className="w-3.5 h-3.5" /> Personalized Domain Finder
+                <Search className="w-3.5 h-3.5" />
+                Course Finder
               </div>
+
               <h2 className="text-lg sm:text-xl font-bold text-stone-900 font-display">
-                Tell us the learner's age to see relatable domains
+                Find courses suitable for your age
               </h2>
-              <p className="text-xs text-stone-500 mt-0.5">
-                We will display only the curriculum tracks engineered specifically for that age group.
+
+              <p className="text-xs text-stone-500 mt-1">
+                Enter an age to filter courses by their listed age range.
               </p>
             </div>
 
-            {/* Age Input Box */}
             <div className="flex items-center gap-2">
-              <div className="flex items-center bg-[#FAF8F5] border border-stone-300 rounded-xl px-3 py-2 focus-within:border-[#FF6B16] focus-within:bg-white transition-all shadow-inner">
-                <span className="text-xs font-semibold text-stone-500 mr-2 whitespace-nowrap">Learner Age:</span>
+
+              <div className="flex items-center bg-[#FAF8F5] border border-stone-300 rounded-xl px-3 py-2 focus-within:border-[#FF6B16]">
+                <span className="text-xs font-semibold text-stone-500 mr-2 whitespace-nowrap">
+                  Age:
+                </span>
+
                 <input
                   type="number"
-                  min="5"
-                  max="80"
+                  min="1"
+                  max="99"
                   value={ageInputVal}
                   onChange={(e) => handleInputChange(e.target.value)}
-                  placeholder="e.g. 10 or 21"
+                  placeholder="Enter age"
                   className="w-24 bg-transparent text-sm font-bold text-stone-900 focus:outline-none"
                   aria-label="Enter learner age"
                 />
               </div>
+
               {selectedAge !== null && (
                 <button
                   onClick={handleClearAge}
-                  className="p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-600 text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer"
-                  title="Reset to browse full catalog"
+                  className="p-2.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-600 text-xs font-medium flex items-center gap-1"
+                  type="button"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Reset Age</span>
+                  Reset
                 </button>
               )}
             </div>
           </div>
 
-          {/* Quick Age Buttons */}
+          {/* QUICK AGE SELECTION */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-stone-600 mr-1">Quick Select Age:</span>
+
+            <span className="text-xs font-semibold text-stone-600 mr-1">
+              Quick Select:
+            </span>
+
             {quickAges.map((age) => (
               <button
                 key={age}
                 type="button"
                 onClick={() => handleSelectAge(age)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   selectedAge === age
-                    ? 'bg-[#FF6B16] text-white shadow-xs'
-                    : 'bg-[#FAF8F5] hover:bg-orange-50 border border-stone-200 text-stone-700 hover:border-orange-300'
+                    ? 'bg-[#FF6B16] text-white'
+                    : 'bg-[#FAF8F5] hover:bg-orange-50 border border-stone-200 text-stone-700'
                 }`}
               >
                 {age} yrs
               </button>
             ))}
 
-            {selectedAge !== null ? (
-              <div className="flex items-center gap-1.5 ml-auto">
+            {selectedAge !== null && (
+              <div className="flex flex-wrap items-center gap-2 ml-auto">
+
                 <button
                   type="button"
                   onClick={() => setAgeFilterMode('relatable_all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
                     ageFilterMode === 'relatable_all'
-                      ? 'bg-stone-900 text-white shadow-xs'
-                      : 'text-stone-700 hover:text-stone-900 bg-stone-100'
+                      ? 'bg-stone-900 text-white'
+                      : 'text-stone-700 bg-stone-100'
                   }`}
                 >
-                  Show All Relatable ({activeAgeRelatableCount})
+                  Related Courses ({activeAgeRelatableCount})
                 </button>
+
                 <button
                   type="button"
                   onClick={() => setAgeFilterMode('exact')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold ${
                     ageFilterMode === 'exact'
-                      ? 'bg-[#FF6B16] text-white shadow-xs'
-                      : 'text-stone-700 hover:text-stone-900 bg-stone-100'
+                      ? 'bg-[#FF6B16] text-white'
+                      : 'text-stone-700 bg-stone-100'
                   }`}
                 >
-                  Exact Fit ({activeAgeExactCount})
+                  Exact Age Match ({activeAgeExactCount})
                 </button>
               </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setCategoryFilter('all')}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ml-auto bg-stone-900 text-white shadow-xs"
-              >
-                Show All Tracks ({FOCUS_AREAS.length})
-              </button>
             )}
+
           </div>
 
-          {/* Dynamic Relatable Result Banner with Strict Age Boundary */}
-          {selectedAge !== null ? (
-            <div className="p-3.5 rounded-xl bg-orange-50/80 border border-orange-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B16] animate-pulse shrink-0" />
-                <span className="text-stone-800">
-                  Showing <strong>{filteredAreas.length} Relatable Programs</strong> for <strong>Age {selectedAge}</strong>:{' '}
-                  <span className="font-bold text-[#FF6B16]">
-                    {selectedAge < 18 ? '🌟 Junior Foundation & Enrichment Academy' : '💼 University, Tech & Career Specializations'}
-                  </span>
-                  {' '}+ Universal Cognitive Tracks
-                </span>
-              </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-[11px] text-stone-500">
-                  {ageFilterMode === 'relatable_all' ? 'All relatable tracks shown' : 'Filtered strictly to exact age'}
-                </span>
+          {/* CATEGORY FILTER */}
+          {selectedAge === null && (
+            <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center gap-2">
+
+              <span className="text-xs text-stone-500 mr-1">
+                Browse by category:
+              </span>
+
+              {[
+                { id: 'all', label: 'All Courses' },
+                { id: 'junior', label: 'Young Learners' },
+                { id: 'career', label: 'Career Courses' },
+                { id: 'general', label: 'All-Age Courses' },
+              ].map((category) => (
                 <button
-                  onClick={handleClearAge}
-                  className="text-stone-500 hover:text-stone-800 underline text-[11px] cursor-pointer"
+                  key={category.id}
+                  type="button"
+                  onClick={() =>
+                    setCategoryFilter(
+                      category.id as typeof categoryFilter
+                    )
+                  }
+                  className={`py-1.5 px-3 rounded-lg text-xs font-semibold transition-all ${
+                    categoryFilter === category.id
+                      ? 'bg-stone-900 text-white'
+                      : 'text-stone-600 hover:bg-stone-100 border border-stone-200'
+                  }`}
                 >
-                  Browse Full Catalog
+                  {category.label}
                 </button>
-              </div>
+              ))}
+
             </div>
-          ) : (
-            /* Category Fallback Filters if no specific age entered */
-            <div className="pt-2 flex flex-wrap items-center gap-2 border-t border-stone-100">
-              <span className="text-xs text-stone-500 mr-2">Or browse by pillar:</span>
+          )}
+
+          {selectedAge !== null && (
+            <div className="p-3 rounded-xl bg-orange-50 border border-orange-200 text-xs text-stone-700">
+              Showing <strong>{filteredAreas.length} courses</strong> for
+              age <strong>{selectedAge}</strong>.
               <button
-                onClick={() => setCategoryFilter('all')}
-                className={`py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  categoryFilter === 'all'
-                    ? 'bg-stone-900 text-white'
-                    : 'text-stone-600 hover:bg-stone-100 border border-stone-200'
-                }`}
+                type="button"
+                onClick={handleClearAge}
+                className="ml-3 underline font-semibold"
               >
-                All Programs ({FOCUS_AREAS.length})
-              </button>
-              <button
-                onClick={() => setCategoryFilter('junior')}
-                className={`py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  categoryFilter === 'junior'
-                    ? 'bg-[#FF6B16] text-white'
-                    : 'text-stone-600 hover:bg-stone-100 border border-stone-200'
-                }`}
-              >
-                <GraduationCap className="w-3.5 h-3.5" />
-                School &amp; Foundation Academy
-              </button>
-              <button
-                onClick={() => setCategoryFilter('career')}
-                className={`py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  categoryFilter === 'career'
-                    ? 'bg-[#FF6B16] text-white'
-                    : 'text-stone-600 hover:bg-stone-100 border border-stone-200'
-                }`}
-              >
-                <Briefcase className="w-3.5 h-3.5" />
-                University &amp; Tech Careers
-              </button>
-              <button
-                onClick={() => setCategoryFilter('general')}
-                className={`py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  categoryFilter === 'general'
-                    ? 'bg-[#FF6B16] text-white'
-                    : 'text-stone-600 hover:bg-stone-100 border border-stone-200'
-                }`}
-              >
-                <Globe className="w-3.5 h-3.5" />
-                Universal Cognitive Tracks
+                View all courses
               </button>
             </div>
           )}
 
-          {/* Student Audience Selector: Target International as well as Indian */}
-          <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-1.5 text-stone-600 font-medium">
-              <Filter className="w-3.5 h-3.5 text-[#FF6B16]" /> Target Student Cohort:
-            </div>
-            <div className="flex flex-wrap items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => setAudienceFilter('all')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
-                  audienceFilter === 'all'
-                    ? 'bg-stone-900 text-white'
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                }`}
-              >
-                🌍 Global &amp; Indian Students (All)
-              </button>
-              <button
-                type="button"
-                onClick={() => setAudienceFilter('international')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
-                  audienceFilter === 'international'
-                    ? 'bg-[#FF6B16] text-white'
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                }`}
-              >
-                🌐 International &amp; NRI Diaspora
-              </button>
-              <button
-                type="button"
-                onClick={() => setAudienceFilter('indian')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
-                  audienceFilter === 'indian'
-                    ? 'bg-[#FF6B16] text-white'
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                }`}
-              >
-                🇮🇳 Indian School &amp; National Focus
-              </button>
-            </div>
-          </div>
         </div>
 
-        {/* Focus Areas Grid */}
+        {/* COURSE CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {filteredAreas.map((area: TechnologyFocusArea) => {
-            const isJunior = area.ageGroup === 'junior';
-            const isGeneral = area.ageGroup === 'general';
-            return (
-              <div
-                key={area.id}
-                className="rounded-2xl bg-white border border-stone-200 shadow-xs p-6 sm:p-8 flex flex-col justify-between hover:border-orange-300 hover:shadow-md transition-all group"
-              >
-                <div className="space-y-4">
-                  {/* Category and Domain Tag */}
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                    <span className="text-[#FF6B16] font-semibold">{area.category}</span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${
-                          isJunior
-                            ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                            : isGeneral
-                            ? 'bg-teal-50 text-teal-800 border-teal-200'
-                            : 'bg-orange-50 text-orange-800 border-orange-200/60'
-                        }`}
-                      >
-                        {area.domainTag}
+
+          {filteredAreas.map((area: TechnologyFocusArea) => (
+
+            <div
+              key={area.id}
+              className="rounded-2xl bg-white border border-stone-200 shadow-xs p-6 sm:p-8 flex flex-col justify-between hover:border-orange-300 hover:shadow-md transition-all group"
+            >
+
+              <div className="space-y-5">
+
+                {/* CATEGORY */}
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+
+                  <span className="text-[#FF6B16] font-semibold">
+                    {area.category}
+                  </span>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-orange-50 text-orange-800 text-[11px] font-medium border border-orange-200">
+                      {area.domainTag}
+                    </span>
+
+                    {area.badge && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-stone-100 text-stone-700 text-[11px] font-medium border border-stone-200">
+                        {area.badge}
                       </span>
-                      {area.badge && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 text-[11px] font-medium border border-stone-200">
-                          {area.badge}
-                        </span>
-                      )}
+                    )}
+
+                  </div>
+                </div>
+
+                {/* ICON AND TITLE */}
+                <div className="flex items-center gap-3.5">
+
+                  <div className="w-12 h-12 rounded-xl bg-orange-100/60 border border-orange-200 flex items-center justify-center shrink-0">
+                    {getIcon(area.id)}
+                  </div>
+
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-stone-900 font-display group-hover:text-[#FF6B16] transition-colors leading-tight">
+                      {area.title}
+                    </h3>
+
+                    <div className="text-[11px] text-stone-500 font-medium mt-1">
+                      {area.ageGroup === 'junior'
+                        ? 'Young Learner Programme'
+                        : area.ageGroup === 'career'
+                        ? 'Career & Professional Programme'
+                        : 'General Learning Programme'}
                     </div>
                   </div>
 
-                  {/* Icon & Title */}
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-xl bg-orange-100/60 border border-orange-200 flex items-center justify-center shrink-0">
-                      {getIcon(area.id)}
-                    </div>
-                    <div>
-                      <h3 className="text-xl sm:text-2xl font-bold text-stone-900 font-display group-hover:text-[#FF6B16] transition-colors leading-tight">
-                        {area.title}
-                      </h3>
-                      <div className="text-[11px] text-stone-500 font-medium mt-0.5 flex items-center gap-1.5">
-                        <span className="text-[#FF6B16] font-semibold">
-                          {isJunior ? 'Foundation & Enrichment Track' : isGeneral ? 'Universal Cognitive Skill' : 'Professional Engineering Specialization'}
-                        </span>
-                      </div>
-                    </div>
+                </div>
+
+                {/* DESCRIPTION */}
+                <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                  {area.description}
+                </p>
+
+                {/* COURSE DETAILS */}
+                <div className="p-4 rounded-xl bg-[#FAF8F5] border border-stone-200 space-y-4 text-xs text-stone-700">
+
+                  <div>
+                    <h4 className="font-bold text-stone-900 mb-1">
+                      Course Level
+                    </h4>
+                    <p>{area.level || 'Refer to the course curriculum.'}</p>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                    {area.description}
-                  </p>
+                  <div>
+                    <h4 className="font-bold text-stone-900 mb-1">
+                      Suitable For
+                    </h4>
+                    <p>{area.suitableFor || 'Learners interested in this subject.'}</p>
+                  </div>
 
-                  {/* International & Indian Curriculum Alignment */}
-                  {(area.globalCurriculum || area.timeZoneFriendly) && (
-                    <div className="p-3 rounded-xl bg-orange-50/50 border border-orange-200/70 space-y-1.5 text-[11px]">
-                      {area.globalCurriculum && (
-                        <div className="flex items-start gap-2 text-stone-700">
-                          <Globe className="w-3.5 h-3.5 text-[#FF6B16] shrink-0 mt-0.5" />
-                          <span><strong>Curriculum Alignment:</strong> {area.globalCurriculum}</span>
-                        </div>
-                      )}
-                      {area.timeZoneFriendly && (
-                        <div className="flex items-start gap-2 text-stone-700">
-                          <Clock className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
-                          <span><strong>Time-Zone Friendly:</strong> {area.timeZoneFriendly}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <div>
+                    <h4 className="font-bold text-stone-900 mb-2">
+                      Course Topics
+                    </h4>
 
-                  {/* Core Focus Points */}
-                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-stone-200/80 space-y-2 text-xs text-stone-700">
-                    <div className="font-semibold text-stone-900 text-[11px] uppercase tracking-wider">
-                      Planned Core Competencies:
-                    </div>
-                    <div className="space-y-1.5">
-                      {area.topics.map((topic, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
+                    <div className="space-y-2">
+                      {area.topics.map((topic, index) => (
+                        <div key={index} className="flex items-start gap-2">
                           <CheckCircle2 className="w-3.5 h-3.5 text-[#FF6B16] shrink-0 mt-0.5" />
-                          <span className="leading-snug">{topic}</span>
+                          <span>{topic}</span>
                         </div>
                       ))}
                     </div>
                   </div>
+
+                  {area.technologies && (
+                    <div>
+                      <h4 className="font-bold text-stone-900 mb-1">
+                        Technologies & Tools
+                      </h4>
+                      <p>{area.technologies}</p>
+                    </div>
+                  )}
+
+                  {area.learningOutcomes && area.learningOutcomes.length > 0 && (
+                    <div>
+                      <h4 className="font-bold text-stone-900 mb-2">
+                        Learning Outcomes
+                      </h4>
+
+                      <ul className="list-disc pl-5 space-y-1">
+                        {area.learningOutcomes.map((outcome, index) => (
+                          <li key={index}>{outcome}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {area.practicalWork && (
+                    <div>
+                      <h4 className="font-bold text-stone-900 mb-1">
+                        Practical Projects & Activities
+                      </h4>
+                      <p>{area.practicalWork}</p>
+                    </div>
+                  )}
+
+                  {area.publishingNote && (
+                    <div className="pt-3 border-t border-stone-200">
+                      <h4 className="font-bold text-stone-900 mb-1">
+                        Additional Information
+                      </h4>
+                      <p>{area.publishingNote}</p>
+                    </div>
+                  )}
+
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div className="text-xs text-stone-500">
-                    Cohort size: 1-on-1 or interactive micro-batches.
-                  </div>
-                  <button
-                    onClick={() => openEarlyAccessModal(area.title)}
-                    className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    Notify Me When Announced <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
               </div>
-            );
-          })}
+
+              {/* REGISTRATION BUTTON */}
+              <div className="pt-6 mt-6 border-t border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+
+                <div className="text-xs text-stone-500">
+                  Interested in this course?
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => openEarlyAccessModal(area.title)}
+                  className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5"
+                >
+                  Register Your Interest
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+
+              </div>
+
+            </div>
+          ))}
+
         </div>
 
-        {/* Global Student Support Banner */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-white border border-stone-200 shadow-xs space-y-4 max-w-4xl mx-auto">
-          <div className="flex items-center gap-2.5 text-[#FF6B16] font-bold text-sm">
-            <Globe className="w-5 h-5" /> Serving Indian Students &amp; Global International Cohorts
+        {/* EMPTY STATE */}
+        {filteredAreas.length === 0 && (
+          <div className="text-center py-16 bg-white rounded-2xl border border-stone-200">
+            <GraduationCap className="w-10 h-10 mx-auto mb-3 text-stone-400" />
+
+            <h3 className="text-lg font-bold text-stone-900">
+              No matching courses found
+            </h3>
+
+            <p className="text-sm text-stone-500 mt-2">
+              Try another age or view all available courses.
+            </p>
+
+            <button
+              type="button"
+              onClick={handleClearAge}
+              className="mt-4 px-5 py-2.5 bg-[#FF6B16] text-white rounded-xl text-sm font-semibold"
+            >
+              View All Courses
+            </button>
           </div>
-          <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-            Whether your student is enrolled in a school in Mumbai, Delhi, London, Dubai, Singapore, New York, or Toronto, Code Mux curriculums bridge rigorous conceptual foundations with interactive live teaching. All sessions are scheduled to accommodate local time zones with bilingual or pure English instruction.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs text-stone-700">
-            <div className="p-3 bg-[#FAF8F5] rounded-xl border border-stone-200">
-              <div className="font-bold text-stone-900 mb-0.5">🇮🇳 Indian Students</div>
-              <div>CBSE/ICSE school exam acceleration, Olympiad mastery, college placement prep.</div>
-            </div>
-            <div className="p-3 bg-[#FAF8F5] rounded-xl border border-stone-200">
-              <div className="font-bold text-stone-900 mb-0.5">🌐 NRI Diaspora</div>
-              <div>Vedic Math, Hindi/Sanskrit heritage fluency, coding logic at flexible PST/EST/GMT hours.</div>
-            </div>
-            <div className="p-3 bg-[#FAF8F5] rounded-xl border border-stone-200">
-              <div className="font-bold text-stone-900 mb-0.5">🌍 International Students</div>
-              <div>US Common Core, Cambridge IGCSE, Model UN debate &amp; global AI/engineering tracks.</div>
-            </div>
-          </div>
-        </div>
+        )}
+
       </div>
     </div>
   );
 };
+
+export default FocusAreasView;

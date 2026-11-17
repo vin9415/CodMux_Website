@@ -86,7 +86,7 @@ export const HomeView: React.FC = () => {
               {/* Main Headline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-950 tracking-tight leading-[1.1] font-display">
                 Learn, Build &amp; Excel with{' '}
-                <span className="text-[#FF6B16]">Code Mux</span>
+                <span className="text-[#FF6B16]"> CoDMux </span>
               </h1>
 
               {/* Supporting Text */}
@@ -518,7 +518,7 @@ export const HomeView: React.FC = () => {
             Prepare for the Opportunities Ahead
           </h2>
           <p className="text-sm text-stone-600 leading-relaxed max-w-2xl mx-auto">
-            Code Mux supports students through technical interview preparation, resume reviews, mock interviews, practical projects, and career guidance.
+            CoDMux supports students through technical interview preparation, resume reviews, mock interviews, practical projects, and career guidance.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left pt-2">
@@ -563,7 +563,7 @@ export const HomeView: React.FC = () => {
               Frequently Asked Questions
             </h2>
             <p className="text-sm text-stone-600">
-              Honest, transparent answers about Code Mux, our focus areas, and batch releases.
+              Honest, transparent answers about CoDMux, our focus areas, and batch releases.
             </p>
           </div>
 
@@ -605,7 +605,7 @@ export const HomeView: React.FC = () => {
             Your Tech Journey Starts Here.
           </h2>
           <p className="text-sm sm:text-base text-stone-600 max-w-xl mx-auto leading-relaxed">
-            Register for early access to receive batch schedules, curriculum announcements, and priority notifications from Code Mux.
+            Register for early access to receive batch schedules, curriculum announcements, and priority notifications from CoDMux.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <button

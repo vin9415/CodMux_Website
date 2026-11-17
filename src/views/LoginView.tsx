@@ -172,7 +172,7 @@ export const LoginView: React.FC = () => {
         return;
       }
 
-      addToast('success', 'Account Created!', `Welcome to Code Mux, ${regName.trim()}!`);
+      addToast('success', 'Account Created!', `Welcome to CoDMux, ${regName.trim()}!`);
       loginUser(data.user);
     } catch (err: any) {
       console.error('Registration network error:', err);
@@ -651,7 +651,7 @@ export const LoginView: React.FC = () => {
                 className="mt-0.5 rounded border-stone-300 text-[#FF6B16] focus:ring-[#FF6B16]"
               />
               <label htmlFor="regConsent" className="text-[11px] text-stone-600 leading-tight">
-                I agree to the Code Mux Terms of Service and acknowledge educational updates policy.
+                I agree to the CoDMux Terms of Service and acknowledge educational updates policy.
               </label>
             </div>
 

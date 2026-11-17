@@ -21,7 +21,7 @@ export const PrivacyPolicyView: React.FC = () => {
               Legal Document
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 font-display">
-              Code Mux Privacy Policy
+              CoDMux Privacy Policy
             </h1>
             <p className="text-xs text-stone-500">
               Effective Date: March 2026
@@ -32,7 +32,7 @@ export const PrivacyPolicyView: React.FC = () => {
             <section className="space-y-1.5">
               <h2 className="text-sm font-bold text-stone-900">1. Information Collection</h2>
               <p>
-                Code Mux collects information voluntarily submitted by visitors and learners through waitlist registrations and contact forms (name, email address, optional contact phone, and program preferences).
+                CoDMux collects information voluntarily submitted by visitors and learners through waitlist registrations and contact forms (name, email address, optional contact phone, and program preferences).
               </p>
             </section>
 
@@ -83,21 +83,21 @@ export const TermsView: React.FC = () => {
             <section className="space-y-1.5">
               <h2 className="text-sm font-bold text-stone-900">1. Platform Nature</h2>
               <p>
-                Code Mux provides online technical training courses and career preparation guidance. The platform is not an accredited degree-granting institution.
+                CoDMux provides online technical training courses and career preparation guidance. The platform is not an accredited degree-granting institution.
               </p>
             </section>
 
             <section className="space-y-1.5">
               <h2 className="text-sm font-bold text-stone-900">2. Placement Disclaimer</h2>
               <p>
-                Code Mux offers career preparation, resume reviews, and interview guidance, but does not guarantee job placement or employment outcomes. Hiring decisions rest solely with independent employers.
+                CoDMux offers career preparation, resume reviews, and interview guidance, but does not guarantee job placement or employment outcomes. Hiring decisions rest solely with independent employers.
               </p>
             </section>
 
             <section className="space-y-1.5">
               <h2 className="text-sm font-bold text-stone-900">3. Intellectual Property</h2>
               <p>
-                Students own their original code written during assignments. Course syllabi, video lectures, and website assets remain the property of Code Mux.
+                Students own their original code written during assignments. Course syllabi, video lectures, and website assets remain the property of CoDMux.
               </p>
             </section>
           </div>
@@ -185,7 +185,7 @@ export const CodeOfConductView: React.FC = () => {
             <section className="space-y-1.5">
               <h2 className="text-sm font-bold text-stone-900">1. Respectful Environment</h2>
               <p>
-                All participants in Code Mux sessions, discussion threads, and cohorts are expected to treat peers and instructors with professional courtesy.
+                All participants in CoDMux sessions, discussion threads, and cohorts are expected to treat peers and instructors with professional courtesy.
               </p>
             </section>
 
