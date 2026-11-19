@@ -26,7 +26,7 @@ export const PrivacyProtectionShield: React.FC = () => {
         addToast(
           'info',
           'Source Protection Active',
-          'Right-click inspection and source viewing are disabled for Code Mux proprietary content.'
+          'Right-click inspection and source viewing are disabled for CoDMux proprietary content.'
         );
       }
     };
@@ -77,7 +77,7 @@ export const PrivacyProtectionShield: React.FC = () => {
         addToast(
           'info',
           'View-Source Blocked',
-          'Source code is compiled and protected by Code Mux security protocols.'
+          'Source code is compiled and protected by CoDMux security protocols.'
         );
         return false;
       }

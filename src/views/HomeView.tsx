@@ -202,6 +202,99 @@ export const HomeView: React.FC = () => {
   </div>
 </section>
 
+
+
+     
+      
+      {/* SECTION 1.5: CODEMUX ONE-ON-ONE MENTORSHIP BANNER */}
+      <section className="relative w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-10 bg-white overflow-hidden">
+
+        <div className="max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#241006] via-[#48200B] to-[#8B390D] border border-orange-900/30 shadow-[0_15px_45px_rgba(65,25,5,0.20)]">
+
+            {/* Background glow */}
+            <div className="absolute -top-32 right-0 w-96 h-96 rounded-full bg-orange-500/20 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-1/4 w-72 h-48 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 p-6 sm:p-9 lg:p-10">
+
+              {/* TOP CONTENT */}
+              <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+
+                
+                {/* MAIN CONTENT */}
+                <div className="flex-1 text-center lg:text-left">
+
+                  
+
+                  <p className="mt-4 text-sm sm:text-base lg:text-lg text-orange-50/90 leading-relaxed max-w-3xl">
+
+                    Every student deserves individual attention.
+                    Get dedicated one-on-one live sessions,
+                    personalized guidance and hands-on training
+                    from highly qualified mentors with 10+ years
+                    of experience in teaching and technology.
+
+                  </p>
+
+                  {/* BENEFITS */}
+                  <div className="flex flex-wrap justify-center lg:justify-start gap-x-5 gap-y-3 mt-5">
+
+                    {[
+                      "Live 1:1 Sessions",
+                      "Personalized Guidance",
+                      "Hands-on Projects",
+                      "Career Support"
+                    ].map((item) => (
+                      <span
+                        key={item}
+                        className="inline-flex items-center gap-2 text-xs sm:text-sm text-amber-100 font-medium"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-orange-400 shrink-0" />
+                        {item}
+                      </span>
+                    ))}
+
+                  </div>
+
+                  {/* CTA */}
+                 
+
+                </div>
+              </div>
+
+              {/* FULL-WIDTH BRIDGE ILLUSTRATION */}
+              <div className="relative mt-7 sm:mt-9 -mx-3 sm:-mx-5">
+
+                <img
+                  src="/images/sticker6.webp"
+                  alt="CodeMux mentor supporting students as they cross their learning journey bridge"
+                  className="block w-full h-auto max-h-[360px] object-contain object-center drop-shadow-[0_12px_20px_rgba(0,0,0,0.25)]"
+                />
+                <button
+  type="button"
+  aria-label="Start Your 1:1 Learning Journey"
+  onClick={() => openEarlyAccessModal()}
+  className="absolute right-[2%] bottom-[9%] w-[24%] h-[19%] rounded-full cursor-pointer z-20"
+ />
+
+              </div>
+
+              {/* BOTTOM BRAND MESSAGE */}
+              <div className="relative flex justify-center mt-4 pt-4 border-t border-orange-300/20">
+
+                <p className="text-center text-xs sm:text-sm font-semibold tracking-wide text-orange-100">
+                  YOUR GOALS. YOUR PACE. YOUR PERSONAL MENTOR.
+                </p>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+
       
       {/* SECTION 2: FOCUS AREAS */}
       <section className="relative py-16 lg:py-20 bg-gradient-to-b from-white via-[#FFFCF8] to-[#FFF7ED] border-b border-orange-100 overflow-hidden">

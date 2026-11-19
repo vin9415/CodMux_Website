@@ -50,7 +50,7 @@ export const CertificatePreviewModal: React.FC<CertificatePreviewModalProps> = (
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-bold font-display flex items-center gap-2">
-                <span>Code Mux Official Certificate</span>
+                <span>CoDMux Official Certificate</span>
                 {isPreview && (
                   <span className="px-2 py-0.5 rounded text-[10px] bg-amber-500/30 text-amber-300 font-semibold border border-amber-500/30">
                     Preview Mode
@@ -158,7 +158,7 @@ export const CertificatePreviewModal: React.FC<CertificatePreviewModalProps> = (
         {/* Modal Footer */}
         <div className="px-5 py-3.5 bg-white border-t border-stone-200 flex items-center justify-between shrink-0 text-xs">
           <span className="text-stone-500 text-[11px] hidden sm:inline">
-            Issuing Authority: Code Mux Educational Platform • ISO &amp; Industry Aligned
+            Issuing Authority: CoDMux Educational Platform • ISO &amp; Industry Aligned
           </span>
           <button
             onClick={onClose}

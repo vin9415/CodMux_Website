@@ -308,7 +308,7 @@ export const StudentCertificateSection: React.FC<StudentCertificateSectionProps>
       addToast(
         'success',
         'Certificate Awarded! 🎓',
-        `Official Code Mux certificate for ${activeCourse.name} has been generated and added to your profile.`
+        `Official CoDMux certificate for ${activeCourse.name} has been generated and added to your profile.`
       );
       fetchCertificates();
     } catch (err: any) {
@@ -323,7 +323,7 @@ export const StudentCertificateSection: React.FC<StudentCertificateSectionProps>
         <div className="space-y-2 max-w-xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-[#FF6B16] text-xs font-bold border border-orange-500/30">
             <Award className="w-3.5 h-3.5" />
-            <span>Code Mux Credentialing Hub</span>
+            <span>CoDMux Credentialing Hub</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold font-display">
             My Certificates &amp; Credentials
@@ -469,7 +469,7 @@ export const StudentCertificateSection: React.FC<StudentCertificateSectionProps>
 
         <div className="space-y-2">
           <label htmlFor="certFullNameInput" className="block text-xs font-semibold text-stone-700">
-            Full Name printed on official Code Mux certificate:
+            Full Name printed on official CoDMux certificate:
           </label>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
             <div className="relative flex-1">
@@ -681,7 +681,7 @@ export const StudentCertificateSection: React.FC<StudentCertificateSectionProps>
                 </h3>
                 <p className="text-[11px] text-stone-500">
                   {issuedCert
-                    ? `Official credential verified on Code Mux ledger for ${activeCourse.name}.`
+                    ? `Official credential verified on CoDMux ledger for ${activeCourse.name}.`
                     : `Live preview with student name "${effectiveStudentName}", ${activeCourse.name}, and mentor ${activeCourse.instructorName}.`}
                 </p>
               </div>

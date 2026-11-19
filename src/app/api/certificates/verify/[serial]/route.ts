@@ -24,7 +24,7 @@ export async function GET(
       return NextResponse.json({
         valid: false,
         status: 'not_found',
-        message: `Certificate with serial number ${cleanSerial} was not found in the official Code Mux registry.`,
+        message: `Certificate with serial number ${cleanSerial} was not found in the official CoDMux registry.`,
       });
     }
 
@@ -56,7 +56,7 @@ export async function GET(
       },
       message:
         cert.certificateStatus === 'ACTIVE'
-          ? 'Certificate is authentic, valid, and officially recorded in the Code Mux registry.'
+          ? 'Certificate is authentic, valid, and officially recorded in the CoDMux registry.'
           : 'Certificate is recorded in registry but has been revoked.',
     });
   } catch (error: any) {

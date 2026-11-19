@@ -78,7 +78,7 @@ export const EarlyAccessModal: React.FC = () => {
         <div className="flex flex-col items-center text-center mb-6">
           <img
             src="/assets/aistudio/codemuxlogo_913c6b11.png"
-            alt="Code Mux"
+            alt="CoDMux"
             className="w-12 h-12 object-contain rounded-xl mb-3 shadow-xs"
             referrerPolicy="no-referrer"
           />

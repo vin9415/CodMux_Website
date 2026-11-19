@@ -208,7 +208,7 @@ export const CertificateMasterRenderer: React.FC<CertificateMasterRendererProps>
           {/* Master Certificate Template Background Image */}
           <img
             src="/assets/aistudio/WhatsApp_Image_2026-10-29_at_9.00.34_PM_3fdb0a95.jpeg"
-            alt="Official Code Mux Master Certificate Template"
+            alt="Official CoDMux Master Certificate Template"
             className="absolute inset-0 w-full h-full object-fill pointer-events-none"
             crossOrigin="anonymous"
           />
@@ -387,7 +387,7 @@ export const CertificateMasterRenderer: React.FC<CertificateMasterRendererProps>
                   REVOKED
                 </span>
                 <span className="block font-bold tracking-wider text-rose-900 text-xs mt-0.5">
-                  INVALIDATED BY CODE MUX ADMINISTRATION
+                  INVALIDATED BY CODMUX ADMINISTRATION
                 </span>
               </div>
             </div>

@@ -41,7 +41,7 @@ export const Navbar: React.FC = () => {
         >
           <img
             src="/assets/aistudio/codemuxlogo_913c6b11.png"
-            alt="Code Mux Logo"
+            alt="CoDMux Logo"
             className="w-10 h-10 object-contain rounded-xl transition-transform group-hover:scale-105 shadow-xs"
             referrerPolicy="no-referrer"
           />

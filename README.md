@@ -1,4 +1,4 @@
-# Code Mux - Next.js Production Platform
+# CoDMux - Next.js Production Platform
 
 Production-ready Next.js 15/16 full-stack migration for CoDMux (codmux.Online), backed by PostgreSQL and Prisma ORM.
 

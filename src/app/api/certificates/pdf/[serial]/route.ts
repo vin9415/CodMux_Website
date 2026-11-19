@@ -19,7 +19,7 @@ export async function GET(
     });
 
     if (!cert) {
-      return new NextResponse('Certificate not found in official Code Mux registry.', { status: 404 });
+      return new NextResponse('Certificate not found in official CoDMux registry.', { status: 404 });
     }
 
     const pdfBuffer = renderCertificatePDF({

@@ -19,12 +19,12 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-3">
               <img
                 src="/assets/aistudio/codemuxlogo_913c6b11.png"
-                alt="Code Mux"
+                alt="CoDMux"
                 className="w-10 h-10 object-contain rounded-xl shadow-xs"
                 referrerPolicy="no-referrer"
               />
               <span className="text-xl font-bold tracking-tight text-stone-900 font-display">
-                Code <span className="text-[#FF6B16]">Mux</span>
+                CoD<span className="text-[#FF6B16]">Mux</span>
               </span>
             </div>
 
@@ -135,7 +135,7 @@ export const Footer: React.FC = () => {
                   onClick={() => handleLink('about')}
                   className="hover:text-stone-900 transition-colors text-left cursor-pointer"
                 >
-                  About Code Mux
+                  About CoDMux
                 </button>
               </li>
               <li>
