@@ -93,7 +93,7 @@ export const HomeView: React.FC = () => {
 
         <h1 className="text-4xl sm:text-5xl lg:text-[62px] font-extrabold text-[#254C49] tracking-tight leading-[1.12] font-display">
           Your Next Big Thing Starts Here
-          <span className="text-[#FF6B16]">With CoDMux.</span>
+          <span className="text-[#FF6B16]"> With CoDMux.</span>
         </h1>
 
         <p className="text-base sm:text-lg text-stone-600 max-w-xl leading-relaxed">
@@ -107,7 +107,7 @@ export const HomeView: React.FC = () => {
             onClick={() => openEarlyAccessModal()}
             className="px-7 py-4 text-sm font-bold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl shadow-lg shadow-orange-200 transition-all hover:-translate-y-1 flex items-center gap-2 cursor-pointer"
           >
-            Get Early Access
+            Book Free Demo
             <ArrowRight className="w-4 h-4" />
           </button>
 
@@ -888,7 +888,7 @@ export const HomeView: React.FC = () => {
               onClick={() => openEarlyAccessModal()}
               className="px-6 py-3.5 text-xs font-semibold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
             >
-              Get Early Access <ArrowRight className="w-4 h-4" />
+              Book Free Demo <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => navigateTo('contact')}

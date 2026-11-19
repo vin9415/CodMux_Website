@@ -12,13 +12,13 @@ export const AboutView: React.FC = () => {
         {/* Hero Section */}
         <div className="text-center space-y-4 max-w-3xl mx-auto">
           <div className="text-xs font-semibold uppercase tracking-wider text-[#FF6B16]">
-            About Code Mux
+            About CoDMux
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-stone-900 font-display">
             Connecting Learning, Practical Experience &amp; Careers
           </h1>
           <p className="text-base text-stone-600 leading-relaxed">
-            Code Mux is an affordable, practical technology learning platform designed to help students bridge the gap between academic theory and industry engineering expectations.
+            CoDMux is an affordable, practical technology learning platform designed to help students bridge the gap between academic theory and industry engineering expectations.
           </p>
         </div>
 
@@ -50,11 +50,11 @@ export const AboutView: React.FC = () => {
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-6 h-6 text-[#FF6B16]" />
             <h3 className="text-xl font-bold text-stone-900 font-display">
-              The Code Mux Transparency Pledge
+              The CoDMux Transparency Pledge
             </h3>
           </div>
           <p className="text-sm text-stone-700 leading-relaxed">
-            We believe that technical education should be honest and grounded in reality. Code Mux adheres to the following principles:
+            We believe that technical education should be honest and grounded in reality. CoDMux adheres to the following principles:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs text-stone-700">
             <div className="flex items-start gap-2.5">
