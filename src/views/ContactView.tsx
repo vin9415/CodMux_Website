@@ -1,4 +1,7 @@
 'use client';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import type { E164Number } from 'libphonenumber-js/core';
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Mail, Clock, MapPin, Send, CheckCircle2, Phone } from 'lucide-react';
@@ -244,18 +247,49 @@ export const ContactView: React.FC = () => {
                       <label className="block text-xs font-semibold text-stone-700 mb-1.5">
                         Program of Interest
                       </label>
-                      <select
-                        value={interest}
-                        onChange={(e) => setInterest(e.target.value)}
-                        className="w-full bg-[#FAF8F5] border border-stone-300 rounded-lg px-2.5 py-2 text-xs text-stone-800 focus:outline-none focus:border-[#FF6B16]"
-                      >
-                        <option value="Full-Stack Web Development">Full-Stack Web Development</option>
-                        <option value="Data Analytics & BI">Data Analytics &amp; BI</option>
-                        <option value="Python & AI Fundamentals">Python &amp; AI Fundamentals</option>
-                        <option value="Placement Preparation Program">Placement Preparation Program</option>
-                        <option value="General Query">General Question</option>
-                      </select>
-                    </div>
+                    
+<select
+  value={interest}
+  onChange={(e) => setInterest(e.target.value)}
+  className="w-full bg-[#FAF8F5] border border-stone-300 rounded-lg px-2.5 py-2 text-xs text-stone-800 focus:outline-none focus:border-[#FF6B16]"
+>
+  <option value="">Select Your Area of Interest</option>
+
+  <option value="Complete Frontend Web Development: HTML, CSS & JavaScript">
+    Complete Frontend Web Development: HTML, CSS & JavaScript
+  </option>
+
+  <option value="Python Programming – Complete Course">
+    Python Programming – Complete Course
+  </option>
+
+  <option value="Python Level 1 – Fundamentals">
+    Python Level 1 – Fundamentals
+  </option>
+
+  <option value="Python Level 2 – Intermediate & Advanced">
+    Python Level 2 – Intermediate & Advanced
+  </option>
+
+  <option value="ScratchJr – Creative Coding for Young Learners">
+    ScratchJr – Creative Coding for Young Learners
+  </option>
+
+  <option value="Scratch Programming – Visual Coding & Game Development">
+    Scratch Programming – Visual Coding & Game Development
+  </option>
+
+  <option value="English Language Skills – Grade-wise Learning Programme">
+    English Language Skills – Grade-wise Learning Programme
+  </option>
+
+  <option value="Mathematics – Kindergarten to Grade 10">
+    Mathematics – Kindergarten to Grade 10
+  </option>
+
+  <option value="General Query">General Query</option>
+</select>
+</div>
 
                     <div>
                       <label className="block text-xs font-semibold text-stone-700 mb-1.5">
