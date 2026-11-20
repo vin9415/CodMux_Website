@@ -66,7 +66,8 @@ export const AdminPortalView: React.FC = () => {
     deletePresentation,
     syllabusTracks,
     earlyAccessList,
-    updateLeadStatus,
+updateLeadStatus,
+deleteLead,
     contactInquiries,
     updateInquiryStatus,
     announcements,
@@ -1499,14 +1500,34 @@ export const AdminPortalView: React.FC = () => {
                             {lead.status || 'pending'}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-right space-x-1.5">
-                          <button
-                            onClick={() => updateLeadStatus(lead.id, 'enrolled')}
-                            className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
-                          >
-                            Mark Enrolled
-                          </button>
-                        </td>
+                       
+<td className="py-3 px-4 text-right">
+  <div className="flex items-center justify-end gap-2">
+    <button
+      onClick={() => updateLeadStatus(lead.id, 'enrolled')}
+      className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+    >
+      Mark Enrolled
+    </button>
+
+    <button
+      onClick={() => {
+        const confirmed = window.confirm(
+          `Are you sure you want to permanently delete the lead from ${lead.name}?`
+        );
+
+        if (confirmed) {
+          void deleteLead(lead.id);
+        }
+      }}
+      title="Delete Lead"
+      className="p-1.5 text-stone-400 hover:text-rose-600 rounded-lg cursor-pointer"
+    >
+      <Trash2 className="w-4 h-4" />
+    </button>
+  </div>
+</td>
+
                       </tr>
                     ))}
                   </tbody>

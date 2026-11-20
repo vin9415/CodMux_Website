@@ -83,10 +83,10 @@ export const EarlyAccessModal: React.FC = () => {
             referrerPolicy="no-referrer"
           />
           <h3 className="text-xl font-bold text-stone-900 font-display">
-            Join Early Notification List
+            Book Free Demo Class
           </h3>
           <p className="text-xs text-stone-500 mt-1 max-w-xs">
-            We are preparing our practical training curriculums and schedule. Sign up to receive program announcements first.
+            Sign up to receive program announcements first.
           </p>
         </div>
 
@@ -313,16 +313,23 @@ export const EarlyAccessModal: React.FC = () => {
               </div>
               <div className="relative flex-1">
                 <Phone className="absolute left-3 top-2.5 w-4 h-4 text-stone-400" />
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={15}
-                  value={phone}
-                  onChange={(e) => setPhone(sanitizePhone(e.target.value))}
-                  placeholder="9876543210 (10 digits)"
-                  className="w-full bg-[#FAF8F5] border border-stone-300 rounded-lg pl-9 pr-3 py-2 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#FF6B16]"
-                />
+                
+<input
+  type="tel"
+  inputMode="numeric"
+  pattern="[0-9]{10}"
+  maxLength={10}
+  minLength={10}
+  value={phone}
+  onChange={(e) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setPhone(digits);
+  }}
+  placeholder="Enter 10-digit phone number"
+  required
+  className="w-full bg-[#FAF8F5] border border-stone-300 rounded-lg pl-9 pr-3 py-2 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:border-[#FF6B16]"
+/>
+
               </div>
             </div>
           </div>

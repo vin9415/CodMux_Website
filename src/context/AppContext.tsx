@@ -1276,11 +1276,18 @@ interface AppContextType {
 
   // Early access, Inquiries, Announcements & Logs
   earlyAccessList: EarlyAccessEntry[];
-  joinEarlyAccess: (name: string, email: string, interest: string, phone?: string) => boolean;
+  joinEarlyAccess: (
+  name: string,
+  email: string,
+  interest: string,
+  phone?: string
+) => Promise<boolean>;
   updateLeadStatus: (id: string | number, status: 'pending' | 'enrolled' | 'contacted') => void;
-
+deleteLead: (id: string | number) => Promise<void>;
   contactInquiries: ContactInquiry[];
-  submitContactForm: (inquiry: Omit<ContactInquiry, 'id' | 'submittedAt' | 'status'>) => void;
+  submitContactForm: (
+  inquiry: Omit<ContactInquiry, 'id' | 'submittedAt' | 'status'>
+) => Promise<boolean>;
   updateInquiryStatus: (id: string | number, status: 'new' | 'responded') => void;
 
   announcements: Announcement[];
@@ -1386,43 +1393,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   );
 
   // Early Access & Inquiries
-  const [earlyAccessList, setEarlyAccessList] = useState<EarlyAccessEntry[]>(() =>
-    getStored<EarlyAccessEntry[]>('earlyAccess', [
-      {
-        id: 'lead-1',
-        name: 'Aarav Sharma',
-        email: 'aarav.sharma@example.com',
-        interest: 'Full-Stack Web Development',
-        phone: '+91 98765 43210',
-        submittedAt: '2026-10-28 09:30',
-        status: 'enrolled',
-      },
-      {
-        id: 'lead-2',
-        name: 'Sneha Verma',
-        email: 'sneha.v@example.com',
-        interest: 'Data Analytics & BI',
-        phone: '+91 98123 45678',
-        submittedAt: '2026-10-29 11:45',
-        status: 'pending',
-      },
-    ])
-  );
+ 
+// Early Access & Inquiries
+const [earlyAccessList, setEarlyAccessList] = useState<EarlyAccessEntry[]>([]);
 
-  const [contactInquiries, setContactInquiries] = useState<ContactInquiry[]>(() =>
-    getStored<ContactInquiry[]>('inquiries', [
-      {
-        id: 'inq-1',
-        name: 'Rohan Gupta',
-        email: 'rohan.gupta@example.com',
-        subject: 'Placement Preparation schedule query',
-        interest: 'Placement Preparation & Interview Mastery',
-        message: 'Could you please confirm if mock interviews are conducted 1-on-1?',
-        submittedAt: '2026-10-29 12:10',
-        status: 'new',
-      },
-    ])
-  );
+const [contactInquiries, setContactInquiries] = useState<ContactInquiry[]>([]);
+
+    
+
+ 
 
   const [announcements, setAnnouncements] = useState<Announcement[]>(() =>
     getStored<Announcement[]>('announcements', INITIAL_ANNOUNCEMENTS)
@@ -1446,8 +1425,73 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => { save('submissionsList', submissionsList); }, [submissionsList]);
   useEffect(() => { save('presentationsList', presentationsList); }, [presentationsList]);
   useEffect(() => { save('syllabusTracks', syllabusTracks); }, [syllabusTracks]);
-  useEffect(() => { save('earlyAccess', earlyAccessList); }, [earlyAccessList]);
-  useEffect(() => { save('inquiries', contactInquiries); }, [contactInquiries]);
+ 
+// Load leads and inquiries from PostgreSQL for ADMIN users
+useEffect(() => {
+  if (currentUser?.role !== 'admin') {
+    return;
+  }
+
+  let cancelled = false;
+
+  const loadAdminSubmissions = async () => {
+    try {
+      const [leadsResponse, inquiriesResponse] = await Promise.all([
+        fetch('/api/leads', { cache: 'no-store' }),
+        fetch('/api/inquiries', { cache: 'no-store' }),
+      ]);
+
+      if (!leadsResponse.ok || !inquiriesResponse.ok) {
+        throw new Error('Unable to load leads and inquiries.');
+      }
+
+      const [leads, inquiries] = await Promise.all([
+        leadsResponse.json(),
+        inquiriesResponse.json(),
+      ]);
+
+      if (cancelled) return;
+
+      setEarlyAccessList(
+        leads.map((lead: any) => ({
+          id: String(lead.id),
+          name: lead.name,
+          email: lead.email,
+          phone: lead.phone || '',
+          interest: lead.interest,
+          submittedAt: new Date(lead.submittedAt).toLocaleString('en-IN'),
+          status: String(lead.status).toLowerCase(),
+        }))
+      );
+
+      setContactInquiries(
+        inquiries.map((inquiry: any) => ({
+          ...inquiry,
+          id: String(inquiry.id),
+          submittedAt: new Date(inquiry.submittedAt).toLocaleString('en-IN'),
+          status: String(inquiry.status).toLowerCase(),
+        }))
+      );
+    } catch (error) {
+      console.error('Admin submissions loading error:', error);
+
+      if (!cancelled) {
+        addToast(
+          'error',
+          'Unable to Load Submissions',
+          'Please refresh the admin portal and try again.'
+        );
+      }
+    }
+  };
+
+  loadAdminSubmissions();
+
+  return () => {
+    cancelled = true;
+  };
+}, [currentUser?.role]);
+
   useEffect(() => { save('announcements', announcements); }, [announcements]);
   useEffect(() => { save('auditLogs', auditLogs); }, [auditLogs]);
 
@@ -1934,57 +1978,278 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setIsEarlyAccessModalOpen(false);
   };
 
-  const joinEarlyAccess = (name: string, email: string, interest: string, phone?: string): boolean => {
+  const joinEarlyAccess = async (
+  name: string,
+  email: string,
+  interest: string,
+  phone?: string
+): Promise<boolean> => {
+  try {
+    const response = await fetch('/api/leads', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone?.trim() || '',
+        interest,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to submit demo booking.');
+    }
+
+    const lead = result.lead;
+
     const entry: EarlyAccessEntry = {
-      id: 'lead-' + Date.now(),
-      name,
-      email,
-      interest,
-      phone,
-      submittedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      status: 'pending',
+      id: String(lead.id),
+      name: lead.name,
+      email: lead.email,
+      phone: lead.phone || '',
+      interest: lead.interest,
+      submittedAt: new Date(lead.submittedAt).toLocaleString('en-IN'),
+      status: String(lead.status).toLowerCase() as 'pending' | 'enrolled' | 'contacted',
     };
 
     setEarlyAccessList((prev) => [entry, ...prev]);
-    logAudit(name, 'VISITOR', 'WAITLIST_SUBMIT', `Joined early access for ${interest}`);
+
+    logAudit(
+      name,
+      'VISITOR',
+      'WAITLIST_SUBMIT',
+      `Joined early access for ${interest}`
+    );
+
     addToast(
       'success',
-      'Priority Registration Confirmed!',
-      `Thank you, ${name}! We will update you at ${email} as soon as program details are announced.`
+      'Demo Booking Received!',
+      `Thank you, ${name}! Your details have been saved successfully.`
     );
+
     closeEarlyAccessModal();
     return true;
-  };
+  } catch (error) {
+    console.error('Demo booking submission error:', error);
 
-  const updateLeadStatus = (id: string | number, status: 'pending' | 'enrolled' | 'contacted') => {
-    setEarlyAccessList((prev) =>
-      prev.map((l) => (String(l.id) === String(id) ? { ...l, status } : l))
+    addToast(
+      'error',
+      'Submission Failed',
+      error instanceof Error ? error.message : 'Please try again.'
     );
-    addToast('info', 'Status Updated', `Lead status updated to ${status}`);
-  };
 
-  const submitContactForm = (inquiryData: Omit<ContactInquiry, 'id' | 'submittedAt' | 'status'>) => {
+    return false;
+  }
+};
+
+
+
+ 
+
+ 
+ 
+
+const updateLeadStatus = async (
+  id: string | number,
+  status: 'pending' | 'enrolled' | 'contacted'
+) => {
+  try {
+    const response = await fetch('/api/leads', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: Number(id),
+        status: status.toUpperCase(),
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to update lead status.');
+    }
+
+    const updatedLead = result.lead;
+
+    setEarlyAccessList((prev) =>
+      prev.map((lead) =>
+        String(lead.id) === String(id)
+          ? {
+              ...lead,
+              status: String(updatedLead.status).toLowerCase() as
+                | 'pending'
+                | 'enrolled'
+                | 'contacted',
+            }
+          : lead
+      )
+    );
+
+    addToast('success', 'Lead Status Updated', `Lead status changed to ${status}.`);
+  } catch (error) {
+    console.error('Lead status update error:', error);
+    addToast(
+      'error',
+      'Update Failed',
+      error instanceof Error ? error.message : 'Please try again.'
+    );
+  }
+};
+
+const deleteLead = async (id: string | number): Promise<void> => {
+  try {
+    const response = await fetch(
+      `/api/leads?id=${encodeURIComponent(String(id))}`,
+      { method: 'DELETE' }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to delete lead.');
+    }
+
+    setEarlyAccessList((prev) =>
+      prev.filter((lead) => String(lead.id) !== String(id))
+    );
+
+    addToast('success', 'Lead Deleted', 'The lead has been permanently deleted.');
+  } catch (error) {
+    console.error('Delete lead error:', error);
+    addToast(
+      'error',
+      'Delete Failed',
+      error instanceof Error ? error.message : 'Please try again.'
+    );
+  }
+};
+
+
+
+
+
+  const submitContactForm = async (
+  inquiryData: Omit<ContactInquiry, 'id' | 'submittedAt' | 'status'>
+): Promise<boolean> => {
+  try {
+    const response = await fetch('/api/inquiries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: inquiryData.name.trim(),
+        email: inquiryData.email.trim(),
+        subject: inquiryData.subject,
+        interest: inquiryData.interest,
+        message: inquiryData.message.trim(),
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to submit inquiry.');
+    }
+
+    const savedInquiry = result.inquiry;
+
     const inquiry: ContactInquiry = {
-      ...inquiryData,
-      id: 'inq-' + Date.now(),
-      submittedAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      status: 'new',
+      ...savedInquiry,
+      id: String(savedInquiry.id),
+      submittedAt: new Date(savedInquiry.submittedAt).toLocaleString('en-IN'),
+      status: String(savedInquiry.status).toLowerCase() as 'new' | 'responded',
     };
+
     setContactInquiries((prev) => [inquiry, ...prev]);
-    logAudit(inquiry.name, 'PUBLIC', 'CONTACT_SUBMIT', `Enquiry: ${inquiry.subject}`);
+
+    logAudit(
+      inquiry.name,
+      'PUBLIC',
+      'CONTACT_SUBMIT',
+      `Enquiry: ${inquiry.subject}`
+    );
+
     addToast(
       'success',
       'Message Received',
       'Thank you for contacting CoDMux. We will reply to your email within 24 business hours.'
     );
-  };
 
-  const updateInquiryStatus = (id: string | number, status: 'new' | 'responded') => {
-    setContactInquiries((prev) =>
-      prev.map((inq) => (String(inq.id) === String(id) ? { ...inq, status } : inq))
+    return true;
+  } catch (error) {
+    console.error('Contact inquiry submission error:', error);
+
+    addToast(
+      'error',
+      'Submission Failed',
+      error instanceof Error ? error.message : 'Please try again.'
     );
-    addToast('info', 'Status Updated', `Inquiry status changed to ${status}`);
-  };
+
+    return false;
+  }
+};
+
+ 
+const updateInquiryStatus = async (
+  id: string | number,
+  status: 'new' | 'responded'
+) => {
+  try {
+    const response = await fetch('/api/inquiries', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: Number(id),
+        status: status.toUpperCase(),
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Failed to update inquiry status.');
+    }
+
+    const updatedInquiry = result.inquiry;
+
+    setContactInquiries((prev) =>
+      prev.map((inquiry) =>
+        String(inquiry.id) === String(id)
+          ? {
+              ...inquiry,
+              status: String(updatedInquiry.status).toLowerCase() as
+                | 'new'
+                | 'responded',
+            }
+          : inquiry
+      )
+    );
+
+    addToast(
+      'success',
+      'Inquiry Status Updated',
+      `Inquiry status changed to ${status}.`
+    );
+  } catch (error) {
+    console.error('Inquiry status update error:', error);
+
+    addToast(
+      'error',
+      'Update Failed',
+      error instanceof Error ? error.message : 'Please try again.'
+    );
+  }
+};
+
 
   const addAnnouncement = (title: string, content: string, targetRole: 'all' | 'student' | 'mentor') => {
     const newAnn: Announcement = {
@@ -2045,8 +2310,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         updateSyllabusModule,
 
         earlyAccessList,
-        joinEarlyAccess,
-        updateLeadStatus,
+joinEarlyAccess,
+updateLeadStatus,
+deleteLead,
 
         contactInquiries,
         submitContactForm,
