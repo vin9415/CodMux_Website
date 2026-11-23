@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -25,6 +26,7 @@ import {
   ShieldCheck,
   ArrowRight,
 } from 'lucide-react';
+
 import { StudentCertificateSection } from '../../components/certificate/StudentCertificateSection';
 import { CourseCompletionWidget } from '../../components/CourseCompletionWidget';
 import { Github } from '../../components/GithubIcon';
@@ -47,36 +49,51 @@ export const StudentPortalView: React.FC = () => {
     navigateTo,
   } = useApp();
 
-  // Active navigation tab in User Portal
-  const [activeTab, setActiveTab] = useState<'timetable' | 'attendance' | 'projects' | 'syllabus' | 'ppts' | 'ask' | 'certificates'>('timetable');
+  // Active navigation tab
+  const [activeTab, setActiveTab] = useState<
+    'timetable' | 'attendance' | 'projects' | 'syllabus' | 'ppts' | 'ask' | 'certificates'
+  >('timetable');
 
-  // Admin access & inspection mode
+  // Admin inspection mode
   const isAdmin = currentUser?.role === 'admin';
+
   const studentUsers = usersList.filter((u) => u.role === 'student');
+
   const [adminSelectedStudentId, setAdminSelectedStudentId] = useState<string | number>(
-    studentUsers[0]?.id || 'usr-student-1'
+    studentUsers[0]?.id ?? ''
   );
 
-  // Effective learner being viewed (admin can toggle any enrolled student)
   const effectiveStudent = isAdmin
-    ? studentUsers.find((u) => String(u.id) === String(adminSelectedStudentId)) || studentUsers[0] || currentUser
+    ? studentUsers.find(
+        (u) => String(u.id) === String(adminSelectedStudentId)
+      ) || studentUsers[0] || currentUser
     : currentUser;
 
-  const currentStudentId = effectiveStudent?.id || 'usr-student-1';
+  const currentStudentId = effectiveStudent?.id;
 
-  // Track filter (defaults to learner's enrolled track or Full-Stack)
-  const studentTrack = effectiveStudent?.track || effectiveStudent?.interest || 'Full-Stack Web Development';
-  const [selectedTrackFilter, setSelectedTrackFilter] = useState<string>(studentTrack);
+  // Student track
+  const studentTrack =
+    effectiveStudent?.track ||
+    effectiveStudent?.interest ||
+    'Full-Stack Web Development';
 
-  // Sync track when changing inspected student
+  const [selectedTrackFilter, setSelectedTrackFilter] =
+    useState<string>(studentTrack);
+
   useEffect(() => {
     if (effectiveStudent?.track || effectiveStudent?.interest) {
-      setSelectedTrackFilter(effectiveStudent.track || effectiveStudent.interest || 'Full-Stack Web Development');
+      setSelectedTrackFilter(
+        effectiveStudent.track ||
+          effectiveStudent.interest ||
+          'Full-Stack Web Development'
+      );
     }
   }, [adminSelectedStudentId, effectiveStudent?.id]);
 
-  // Project submission modal/form state
-  const [selectedProjectForSubmit, setSelectedProjectForSubmit] = useState<string | number | null>(null);
+  // Project submission form
+  const [selectedProjectForSubmit, setSelectedProjectForSubmit] =
+    useState<string | number | null>(null);
+
   const [githubUrl, setGithubUrl] = useState('');
   const [liveDemoUrl, setLiveDemoUrl] = useState('');
   const [submissionNotes, setSubmissionNotes] = useState('');
@@ -85,45 +102,26 @@ export const StudentPortalView: React.FC = () => {
   const [questionSubject, setQuestionSubject] = useState('');
   const [questionBody, setQuestionBody] = useState('');
 
-  // Student syllabus topic checklist progress with realistic initial completion milestones
-  const [studentTopicProgress, setStudentTopicProgress] = useState<Record<string, Record<string, boolean>>>({
-    'usr-student-1': {
-      'mod-fs-1-topic-0': true,
-      'mod-fs-1-topic-1': true,
-      'mod-fs-1-topic-2': true,
-      'mod-fs-1-topic-3': true,
-      'mod-fs-2-topic-0': true,
-      'mod-fs-2-topic-1': true,
-      'mod-fs-2-topic-2': true,
-      'mod-fs-3-topic-0': true,
-    },
-    'usr-student-2': {
-      'mod-da-1-topic-0': true,
-      'mod-da-1-topic-1': true,
-      'mod-da-1-topic-2': true,
-      'mod-da-2-topic-0': true,
-      'mod-da-2-topic-1': true,
-    },
-    'usr-student-3': {
-      'mod-place-1-topic-0': true,
-      'mod-place-1-topic-1': true,
-      'mod-place-1-topic-2': true,
-      'mod-place-1-topic-3': true,
-      'mod-place-2-topic-0': true,
-      'mod-place-2-topic-1': true,
-      'mod-place-2-topic-2': true,
-      'mod-place-3-topic-0': true,
-    },
-  });
+  // Student syllabus progress
+  // Starts empty instead of showing hardcoded demo completion.
+  const [studentTopicProgress, setStudentTopicProgress] = useState<
+    Record<string, Record<string, boolean>>
+  >({});
 
-  const checkedTopics = studentTopicProgress[currentStudentId] || {};
+  const checkedTopics = currentStudentId
+    ? studentTopicProgress[String(currentStudentId)] || {}
+    : {};
 
   const toggleTopicCheck = (topicKey: string) => {
+    if (!currentStudentId) return;
+
     setStudentTopicProgress((prev) => {
-      const existing = prev[currentStudentId] || {};
+      const studentId = String(currentStudentId);
+      const existing = prev[studentId] || {};
+
       return {
         ...prev,
-        [currentStudentId]: {
+        [studentId]: {
           ...existing,
           [topicKey]: !existing[topicKey],
         },
@@ -131,107 +129,194 @@ export const StudentPortalView: React.FC = () => {
     });
   };
 
-  // Filtered timetable for student's batch/track
+  // Filtered timetable
   const relevantClasses = classesList.filter(
-    (cls) => !selectedTrackFilter || cls.track === selectedTrackFilter || selectedTrackFilter === 'All'
+    (cls) =>
+      !selectedTrackFilter ||
+      cls.track === selectedTrackFilter ||
+      selectedTrackFilter === 'All'
   );
 
   // Student's personal attendance records
-  const myAttendance = attendanceList.filter(
-    (att) => att.studentId === effectiveStudent?.id || att.studentEmail === effectiveStudent?.email
-  );
-  const totalAttended = myAttendance.filter((a) => a.status === 'present' || a.status === 'late').length;
-  const attendanceRate = myAttendance.length > 0 ? Math.round((totalAttended / myAttendance.length) * 100) : 94; // standard 94%
+  const myAttendance = effectiveStudent
+    ? attendanceList.filter(
+        (att) =>
+          String(att.studentId) === String(effectiveStudent.id) ||
+          att.studentEmail === effectiveStudent.email
+      )
+    : [];
 
-  // Student's submissions
+  const totalAttended = myAttendance.filter(
+    (a) => a.status === 'present' || a.status === 'late'
+  ).length;
+
+  // Actual attendance percentage
+  const attendanceRate =
+    myAttendance.length > 0
+      ? Math.round((totalAttended / myAttendance.length) * 100)
+      : 0;
+
+  // Student submissions
   const mySubmissions = submissionsList.filter(
-    (sub) => sub.studentId === effectiveStudent?.id || sub.studentEmail === effectiveStudent?.email
+    (sub) =>
+      String(sub.studentId) === String(effectiveStudent?.id) ||
+      sub.studentEmail === effectiveStudent?.email
   );
 
-  // Relevant syllabus track
-  const currentSyllabus = syllabusTracks.find((s) => s.trackName === selectedTrackFilter) || syllabusTracks[0];
+  // Relevant syllabus
+  const currentSyllabus =
+    syllabusTracks.find((s) => s.trackName === selectedTrackFilter) ||
+    syllabusTracks[0];
 
-  // Presentations for this track
+  // Presentations
   const relevantPPTs = presentationsList.filter(
-    (p) => !selectedTrackFilter || p.track === selectedTrackFilter || selectedTrackFilter === 'All'
+    (p) =>
+      !selectedTrackFilter ||
+      p.track === selectedTrackFilter ||
+      selectedTrackFilter === 'All'
   );
 
-  // Calculate course completion metrics for the circular progress gauge
-  const totalTrackTopics = currentSyllabus?.modules?.reduce((acc, m) => acc + (m.topics?.length || 0), 0) || 12;
-  const completedTrackTopics = Object.values(checkedTopics).filter(Boolean).length;
-  const syllabusRatio = totalTrackTopics > 0 ? (completedTrackTopics / totalTrackTopics) : 0;
+  // Actual course completion metrics
+  const totalTrackTopics =
+    currentSyllabus?.modules?.reduce(
+      (total, module) => total + (module.topics?.length || 0),
+      0
+    ) || 0;
+
+  const completedTrackTopics = Object.values(checkedTopics).filter(
+    Boolean
+  ).length;
+
+  const syllabusRatio =
+    totalTrackTopics > 0
+      ? Math.min(1, completedTrackTopics / totalTrackTopics)
+      : 0;
 
   const trackProjects = projectsList.filter(
-    (p) => !selectedTrackFilter || p.track === selectedTrackFilter || selectedTrackFilter === 'All'
+    (project) =>
+      !selectedTrackFilter ||
+      project.track === selectedTrackFilter ||
+      selectedTrackFilter === 'All'
   );
-  const totalProjects = trackProjects.length > 0 ? trackProjects.length : 2;
-  const approvedProjects = mySubmissions.filter((s) => s.status === 'approved').length;
-  const projectRatio = totalProjects > 0 ? Math.min(1, approvedProjects / totalProjects) : 0;
 
-  const attendanceRatio = Math.min(1, attendanceRate / 100);
+  const totalProjects = trackProjects.length;
 
-  // Course completion percentage: 50% syllabus + 35% projects + 15% live attendance
+  const approvedProjects = mySubmissions.filter(
+    (submission) => submission.status === 'approved'
+  ).length;
+
+  const projectRatio =
+    totalProjects > 0
+      ? Math.min(1, approvedProjects / totalProjects)
+      : 0;
+
+  const attendanceRatio = attendanceRate / 100;
+
+  // 50% syllabus + 35% approved projects + 15% attendance
   const completionPercentage = Math.min(
     100,
-    Math.round((syllabusRatio * 0.50 + projectRatio * 0.35 + attendanceRatio * 0.15) * 100)
+    Math.round(
+      (
+        syllabusRatio * 0.5 +
+        projectRatio * 0.35 +
+        attendanceRatio * 0.15
+      ) * 100
+    )
   );
 
-  // Demo testing progress override for user/evaluator to test 90%+ vs <90% in student portal
-  const [demoProgressOverride, setDemoProgressOverride] = useState<number | null>(null);
-  const effectiveCompletionPercentage = demoProgressOverride !== null ? demoProgressOverride : completionPercentage;
+  // Actual calculated progress only
+  const effectiveCompletionPercentage = completionPercentage;
 
-  // Real-time backend certificate record check
+  // Certificate status
   const [hasIssuedCert, setHasIssuedCert] = useState(false);
 
   useEffect(() => {
+    if (!currentStudentId) {
+      setHasIssuedCert(false);
+      return;
+    }
+
     let isMounted = true;
+
     const checkIssued = async () => {
       try {
-        const res = await fetch(`/api/certificates?student_id=${encodeURIComponent(currentStudentId)}`);
-        if (res.ok) {
-          const certs = await res.json();
-          if (isMounted) {
-            setHasIssuedCert(Array.isArray(certs) && certs.some((c: any) => c.certificate_status === 'active'));
-          }
+        const res = await fetch(
+          `/api/certificates?student_id=${encodeURIComponent(
+            String(currentStudentId)
+          )}`
+        );
+
+        if (!res.ok) return;
+
+        const certs = await res.json();
+
+        if (isMounted) {
+          setHasIssuedCert(
+            Array.isArray(certs) &&
+              certs.some(
+                (cert: any) => cert.certificate_status === 'active'
+              )
+          );
         }
-      } catch (e) {
-        // silent fallback
+      } catch (error) {
+        console.error('Certificate check failed:', error);
       }
     };
+
     checkIssued();
+
     return () => {
       isMounted = false;
     };
   }, [currentStudentId]);
 
-  // USER REQUIREMENT: 90% course completion required to access certificate
-  let derivedCertStatus: 'not_eligible' | 'in_progress' | 'eligible' | 'issued' | 'revoked' = 'in_progress';
+  // 90% course completion required for certificate eligibility
+  let derivedCertStatus:
+    | 'not_eligible'
+    | 'in_progress'
+    | 'eligible'
+    | 'issued' = 'in_progress';
+
   if (hasIssuedCert) {
     derivedCertStatus = 'issued';
   } else if (effectiveCompletionPercentage >= 90) {
     derivedCertStatus = 'eligible';
   } else if (effectiveCompletionPercentage < 25) {
     derivedCertStatus = 'not_eligible';
-  } else {
-    derivedCertStatus = 'in_progress';
   }
 
+  // Project submission handler
   const handleProjectSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!selectedProjectForSubmit || !githubUrl) {
-      addToast('error', 'Missing GitHub Link', 'Please provide your GitHub repository URL.');
+      addToast(
+        'error',
+        'Missing GitHub Link',
+        'Please provide your GitHub repository URL.'
+      );
       return;
     }
-    submitProject(selectedProjectForSubmit, githubUrl, liveDemoUrl, submissionNotes);
+
+    submitProject(
+      selectedProjectForSubmit,
+      githubUrl,
+      liveDemoUrl,
+      submissionNotes
+    );
+
     setSelectedProjectForSubmit(null);
     setGithubUrl('');
     setLiveDemoUrl('');
     setSubmissionNotes('');
   };
 
+  // Ask mentor handler
   const handleAskMentor = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!questionBody) return;
+
     submitContactForm({
       name: effectiveStudent?.name || 'Student',
       email: effectiveStudent?.email || 'student@codemux.in',
@@ -239,33 +324,61 @@ export const StudentPortalView: React.FC = () => {
       interest: studentTrack,
       message: questionBody,
     });
+
     setQuestionSubject('');
     setQuestionBody('');
-    addToast('success', 'Question Dispatched', 'Your query has been forwarded to the mentorship desk.');
+
+    addToast(
+      'success',
+      'Question Dispatched',
+      'Your query has been forwarded to the mentorship desk.'
+    );
   };
+
+  // Avoid crashing when no syllabus is available
+  if (!currentSyllabus) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF8F5]">
+        <div className="bg-white border border-stone-200 rounded-2xl p-8 text-center">
+          <BookOpen className="w-10 h-10 text-stone-400 mx-auto mb-3" />
+          <h2 className="text-lg font-bold text-stone-900">
+            No Course Available
+          </h2>
+          <p className="text-sm text-stone-500 mt-2">
+            No syllabus has been assigned to this learning track yet.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full py-8 sm:py-12 bg-[#FAF8F5] min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        
-        {/* Admin Inspection Banner (Only rendered when an admin accesses the Student Portal) */}
+
+        {/* Admin Inspection Banner */}
         {isAdmin && (
           <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-50 border-2 border-amber-300 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
               <div className="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm">
                 <ShieldCheck className="w-6 h-6" />
               </div>
+
               <div>
                 <div className="flex items-center gap-2">
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-200 text-amber-900 border border-amber-300">
                     Admin Inspection Mode
                   </span>
+
                   <span className="text-xs font-bold text-stone-700">
                     Student Learning Portal &amp; Progress Gauge
                   </span>
                 </div>
+
                 <p className="text-xs text-stone-600 mt-1">
-                  You are accessing the Student Portal as an Administrator. Inspect any enrolled learner's circular progress, syllabus milestones, and certificates.
+                  You are accessing the Student Portal as an Administrator.
+                  Inspect any enrolled learner's circular progress, syllabus
+                  milestones, and certificates.
                 </p>
               </div>
             </div>
@@ -274,6 +387,7 @@ export const StudentPortalView: React.FC = () => {
               <label className="text-xs font-bold text-stone-700 pl-2">
                 Inspect Learner:
               </label>
+
               <select
                 value={adminSelectedStudentId}
                 onChange={(e) => setAdminSelectedStudentId(e.target.value)}
@@ -285,6 +399,7 @@ export const StudentPortalView: React.FC = () => {
                   </option>
                 ))}
               </select>
+
               <button
                 onClick={() => navigateTo('admin-portal')}
                 className="px-3.5 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
@@ -302,26 +417,33 @@ export const StudentPortalView: React.FC = () => {
             <div className="w-14 h-14 rounded-2xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700 shrink-0">
               <GraduationCap className="w-7 h-7" />
             </div>
+
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-emerald-700 font-bold uppercase tracking-wider">
                   Student Learning Portal
                 </span>
+
                 <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
                   {effectiveStudent?.batch || 'Cohort 2026-A'}
                 </span>
+
                 {isAdmin && (
                   <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
                     Inspecting as Admin
                   </span>
                 )}
               </div>
+
               <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 font-display">
                 Welcome back, {effectiveStudent?.name || 'Learner'}
               </h1>
+
               <p className="text-xs sm:text-sm text-stone-500 mt-0.5">
                 {effectiveStudent?.email} · Enrolled Track:{' '}
-                <span className="font-semibold text-stone-800">{studentTrack}</span>
+                <span className="font-semibold text-stone-800">
+                  {studentTrack}
+                </span>
               </p>
             </div>
           </div>
@@ -329,12 +451,16 @@ export const StudentPortalView: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3">
             <div className="px-3.5 py-2 rounded-xl bg-stone-50 border border-stone-200 text-xs flex items-center gap-2">
               <span className="text-stone-500">Live Attendance:</span>
-              <span className="font-bold text-emerald-700">{attendanceRate}%</span>
+              <span className="font-bold text-emerald-700">
+                {attendanceRate}%
+              </span>
             </div>
 
             <div className="px-3.5 py-2 rounded-xl bg-orange-50 border border-orange-200 text-xs flex items-center gap-2">
               <span className="text-stone-500">Course Progress:</span>
-              <span className="font-bold text-[#FF6B16]">{effectiveCompletionPercentage}%</span>
+              <span className="font-bold text-[#FF6B16]">
+                {effectiveCompletionPercentage}%
+              </span>
             </div>
 
             <button
@@ -346,86 +472,24 @@ export const StudentPortalView: React.FC = () => {
           </div>
         </div>
 
-        {/* Demo & Test-Drive Bar for Evaluator: Check 90%+ vs <90% in Student Portal */}
-        <div className="p-4 rounded-3xl bg-gradient-to-r from-orange-50 via-amber-50 to-orange-50 border-2 border-orange-300/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#FF6B16] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-              DEMO
-            </div>
-            <div>
-              <div className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-                Student Portal Test-Drive &amp; 90% Certificate Access Controls
-                {demoProgressOverride !== null && (
-                  <span className="text-[10px] font-bold text-white bg-[#FF6B16] px-2 py-0.5 rounded-full">
-                    Active: {demoProgressOverride}%
-                  </span>
-                )}
-              </div>
-              <p className="text-[11px] text-stone-600">
-                Check course completion below 90% (locked preview with watermark) versus 90%+ (unlocked official certificate &amp; custom full name input).
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setDemoProgressOverride(95);
-                setActiveTab('certificates');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                effectiveCompletionPercentage >= 90
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-white border border-stone-300 text-stone-700 hover:border-emerald-500'
-              }`}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Test 95% (Completed • Unlocks Certificate)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setDemoProgressOverride(65);
-                setActiveTab('certificates');
-              }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                demoProgressOverride === 65
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'bg-white border border-stone-300 text-stone-700 hover:border-amber-500'
-              }`}
-            >
-              <Clock className="w-3.5 h-3.5" />
-              <span>Test 65% (In Progress • Locked &lt;90%)</span>
-            </button>
-
-            {demoProgressOverride !== null && (
-              <button
-                type="button"
-                onClick={() => setDemoProgressOverride(null)}
-                className="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-white border border-stone-300 text-stone-600 hover:text-stone-900 cursor-pointer"
-              >
-                Reset Progress
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Global Announcement Alert (if any) */}
+        {/* Global Announcement */}
         {announcements.length > 0 && (
           <div className="p-4 rounded-2xl bg-orange-50 border border-orange-200/80 flex items-start gap-3">
             <Sparkles className="w-5 h-5 text-[#FF6B16] shrink-0 mt-0.5" />
+
             <div className="text-xs sm:text-sm text-stone-800">
               <span className="font-bold text-orange-900 mr-2">Notice:</span>
-              {announcements[0].title} — <span className="text-stone-600">{announcements[0].content}</span>
+              {announcements[0].title} —{' '}
+              <span className="text-stone-600">
+                {announcements[0].content}
+              </span>
             </div>
           </div>
         )}
 
-        {/* Live Course Completion Percentage Circular Progress Dashboard Widget */}
+        {/* Course Completion Widget */}
         <CourseCompletionWidget
-          courseName={currentSyllabus?.trackName || studentTrack}
+          courseName={currentSyllabus.trackName || studentTrack}
           batchName={effectiveStudent?.batch || 'Cohort 2026-A'}
           completionPercentage={effectiveCompletionPercentage}
           totalTopics={totalTrackTopics}
@@ -451,6 +515,7 @@ export const StudentPortalView: React.FC = () => {
           >
             <Calendar className="w-4 h-4" /> Class Timetable
           </button>
+
           <button
             onClick={() => setActiveTab('attendance')}
             className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
@@ -461,6 +526,7 @@ export const StudentPortalView: React.FC = () => {
           >
             <UserCheck className="w-4 h-4" /> Attendance ({attendanceRate}%)
           </button>
+
           <button
             onClick={() => setActiveTab('projects')}
             className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
@@ -471,6 +537,7 @@ export const StudentPortalView: React.FC = () => {
           >
             <Github className="w-4 h-4" /> Projects &amp; Submissions
           </button>
+
           <button
             onClick={() => setActiveTab('syllabus')}
             className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
@@ -481,6 +548,7 @@ export const StudentPortalView: React.FC = () => {
           >
             <BookOpen className="w-4 h-4" /> Syllabus &amp; Modules
           </button>
+
           <button
             onClick={() => setActiveTab('ppts')}
             className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
@@ -491,6 +559,7 @@ export const StudentPortalView: React.FC = () => {
           >
             <Presentation className="w-4 h-4" /> Class PPTs &amp; Slides
           </button>
+
           <button
             onClick={() => setActiveTab('ask')}
             className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
@@ -501,6 +570,7 @@ export const StudentPortalView: React.FC = () => {
           >
             <Send className="w-4 h-4" /> Ask Mentor
           </button>
+
           <button
             onClick={() => setActiveTab('certificates')}
             className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
@@ -513,12 +583,15 @@ export const StudentPortalView: React.FC = () => {
           </button>
         </div>
 
-        {/* Track Filter selector */}
+        {/* Track Filter */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-stone-200">
           <div className="flex items-center gap-2 text-xs text-stone-500">
             <Filter className="w-4 h-4 text-stone-400" />
-            <span className="font-semibold text-stone-700">Filter Learning Track:</span>
+            <span className="font-semibold text-stone-700">
+              Filter Learning Track:
+            </span>
           </div>
+
           <div className="flex flex-wrap gap-1.5">
             {syllabusTracks.map((st) => (
               <button
@@ -541,9 +614,14 @@ export const StudentPortalView: React.FC = () => {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-stone-900 font-display">Class Timetable &amp; Live Sessions</h2>
-                <p className="text-xs text-stone-500">Access scheduled live lectures, meeting links, and session recordings.</p>
+                <h2 className="text-xl font-bold text-stone-900 font-display">
+                  Class Timetable &amp; Live Sessions
+                </h2>
+                <p className="text-xs text-stone-500">
+                  Access scheduled live lectures, meeting links, and session recordings.
+                </p>
               </div>
+
               <span className="text-xs font-semibold px-3 py-1 bg-stone-100 text-stone-700 rounded-lg">
                 {relevantClasses.length} Sessions Listed
               </span>
@@ -564,6 +642,7 @@ export const StudentPortalView: React.FC = () => {
                         <span className="text-[11px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">
                           {cls.track}
                         </span>
+
                         <span
                           className={`text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
                             isCompleted
@@ -575,22 +654,33 @@ export const StudentPortalView: React.FC = () => {
                         </span>
                       </div>
 
-                      <h3 className="text-base font-bold text-stone-900 line-clamp-1">{cls.topic}</h3>
-                      <p className="text-xs text-stone-600 line-clamp-2">{cls.description}</p>
+                      <h3 className="text-base font-bold text-stone-900 line-clamp-1">
+                        {cls.topic}
+                      </h3>
+
+                      <p className="text-xs text-stone-600 line-clamp-2">
+                        {cls.description}
+                      </p>
 
                       <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-100 text-xs text-stone-600">
                         <div className="flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-stone-400" />
                           <span>{cls.date}</span>
                         </div>
+
                         <div className="flex items-center gap-1.5">
                           <Clock className="w-3.5 h-3.5 text-stone-400" />
                           <span>{cls.time}</span>
                         </div>
+
                         <div className="flex items-center gap-1.5 col-span-2">
                           <span className="text-stone-400">Mentor:</span>
-                          <span className="font-semibold text-stone-800">{cls.mentorName}</span>
-                          <span className="text-stone-400 ml-auto">Batch: {cls.batch}</span>
+                          <span className="font-semibold text-stone-800">
+                            {cls.mentorName}
+                          </span>
+                          <span className="text-stone-400 ml-auto">
+                            Batch: {cls.batch}
+                          </span>
                         </div>
                       </div>
 
@@ -598,8 +688,11 @@ export const StudentPortalView: React.FC = () => {
                         <div className="p-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs flex items-center justify-between">
                           <div className="flex items-center gap-2 truncate">
                             <Presentation className="w-3.5 h-3.5 text-[#FF6B16] shrink-0" />
-                            <span className="truncate text-stone-700">{cls.pptTitle}</span>
+                            <span className="truncate text-stone-700">
+                              {cls.pptTitle}
+                            </span>
                           </div>
+
                           {cls.pptUrl && (
                             <a
                               href={cls.pptUrl}
@@ -629,6 +722,7 @@ export const StudentPortalView: React.FC = () => {
                           <span className="flex items-center gap-1 text-emerald-700 font-semibold">
                             <CheckCircle2 className="w-3.5 h-3.5" /> Session Concluded
                           </span>
+
                           {cls.recordingUrl && (
                             <a
                               href={cls.recordingUrl}
@@ -652,35 +746,66 @@ export const StudentPortalView: React.FC = () => {
         {/* TAB 2: ATTENDANCE */}
         {activeTab === 'attendance' && (
           <div className="space-y-6">
-            {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-xs">
-                <div className="text-xs text-stone-500 uppercase font-bold tracking-wider">Overall Attendance</div>
-                <div className="text-3xl font-bold text-emerald-600 mt-1 font-display">{attendanceRate}%</div>
-                <p className="text-xs text-stone-500 mt-1">Minimum 80% required for placement certification</p>
-              </div>
-              <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-xs">
-                <div className="text-xs text-stone-500 uppercase font-bold tracking-wider">Attended Sessions</div>
-                <div className="text-3xl font-bold text-stone-900 mt-1 font-display">{totalAttended} / {myAttendance.length || 1}</div>
-                <p className="text-xs text-stone-500 mt-1">Live lectures and coding workshops verified</p>
-              </div>
-              <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-xs">
-                <div className="text-xs text-stone-500 uppercase font-bold tracking-wider">Attendance Status</div>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
-                  <span className="text-sm font-bold text-stone-900">Good Standing</span>
+                <div className="text-xs text-stone-500 uppercase font-bold tracking-wider">
+                  Overall Attendance
                 </div>
-                <p className="text-xs text-stone-500 mt-1">Eligible for mock interview slots</p>
+                <div className="text-3xl font-bold text-emerald-600 mt-1 font-display">
+                  {attendanceRate}%
+                </div>
+                <p className="text-xs text-stone-500 mt-1">
+                  Minimum 80% required for placement certification
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-xs">
+                <div className="text-xs text-stone-500 uppercase font-bold tracking-wider">
+                  Attended Sessions
+                </div>
+                <div className="text-3xl font-bold text-stone-900 mt-1 font-display">
+                  {totalAttended} / {myAttendance.length}
+                </div>
+                <p className="text-xs text-stone-500 mt-1">
+                  Live lectures and coding workshops verified
+                </p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-stone-200 shadow-xs">
+                <div className="text-xs text-stone-500 uppercase font-bold tracking-wider">
+                  Attendance Status
+                </div>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <span
+                    className={`w-3 h-3 rounded-full ${
+                      attendanceRate >= 80
+                        ? 'bg-emerald-500'
+                        : 'bg-rose-500'
+                    }`}
+                  />
+                  <span className="text-sm font-bold text-stone-900">
+                    {attendanceRate >= 80 ? 'Good Standing' : 'Below Requirement'}
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-500 mt-1">
+                  Based on recorded attendance
+                </p>
               </div>
             </div>
 
-            {/* Attendance Log Table */}
             <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs">
               <div className="p-4 sm:p-5 border-b border-stone-200 flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-stone-900">Session Attendance Roster</h3>
-                  <p className="text-xs text-stone-500">Live records marked by course mentors</p>
+                  <h3 className="font-bold text-stone-900">
+                    Session Attendance Roster
+                  </h3>
+                  <p className="text-xs text-stone-500">
+                    Live records marked by course mentors
+                  </p>
                 </div>
+
                 <span className="text-xs font-semibold px-2.5 py-1 bg-stone-100 rounded-lg text-stone-600">
                   {myAttendance.length} Records
                 </span>
@@ -689,8 +814,12 @@ export const StudentPortalView: React.FC = () => {
               {myAttendance.length === 0 ? (
                 <div className="p-8 text-center text-xs text-stone-500 space-y-2">
                   <UserCheck className="w-8 h-8 text-stone-300 mx-auto" />
-                  <p className="font-semibold text-stone-700">No attendance records registered yet.</p>
-                  <p>When mentors conclude your upcoming live sessions, attendance entries will show up here automatically.</p>
+                  <p className="font-semibold text-stone-700">
+                    No attendance records registered yet.
+                  </p>
+                  <p>
+                    When mentors conclude your upcoming live sessions, attendance entries will show up here automatically.
+                  </p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -704,11 +833,16 @@ export const StudentPortalView: React.FC = () => {
                         <th className="py-3 px-4">Remarks</th>
                       </tr>
                     </thead>
+
                     <tbody className="divide-y divide-stone-100 text-stone-800">
                       {myAttendance.map((rec) => (
                         <tr key={rec.id} className="hover:bg-stone-50/60 transition-colors">
-                          <td className="py-3 px-4 font-mono font-medium text-stone-600">{rec.classDate}</td>
-                          <td className="py-3 px-4 font-semibold text-stone-900">{rec.classTopic}</td>
+                          <td className="py-3 px-4 font-mono font-medium text-stone-600">
+                            {rec.classDate}
+                          </td>
+                          <td className="py-3 px-4 font-semibold text-stone-900">
+                            {rec.classTopic}
+                          </td>
                           <td className="py-3 px-4">
                             <span
                               className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
@@ -722,8 +856,12 @@ export const StudentPortalView: React.FC = () => {
                               {rec.status}
                             </span>
                           </td>
-                          <td className="py-3 px-4 text-stone-600">{rec.markedBy}</td>
-                          <td className="py-3 px-4 text-stone-500">{rec.remarks || '—'}</td>
+                          <td className="py-3 px-4 text-stone-600">
+                            {rec.markedBy}
+                          </td>
+                          <td className="py-3 px-4 text-stone-500">
+                            {rec.remarks || '—'}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -739,25 +877,36 @@ export const StudentPortalView: React.FC = () => {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-stone-900 font-display">Capstone Projects &amp; Deliverables</h2>
-                <p className="text-xs text-stone-500">Real-world production engineering projects required for portfolio review.</p>
+                <h2 className="text-xl font-bold text-stone-900 font-display">
+                  Capstone Projects &amp; Deliverables
+                </h2>
+                <p className="text-xs text-stone-500">
+                  Real-world production engineering projects required for portfolio review.
+                </p>
               </div>
+
               <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-orange-50 text-[#FF6B16] border border-orange-200">
-                {projectsList.filter((p) => p.track === selectedTrackFilter).length} Projects in this Track
+                {trackProjects.length} Projects in this Track
               </span>
             </div>
 
-            {/* My Submissions status */}
             {mySubmissions.length > 0 && (
               <div className="p-5 rounded-2xl bg-white border border-stone-200 space-y-3 shadow-xs">
                 <h3 className="text-sm font-bold text-stone-900 flex items-center gap-2">
                   <Award className="w-4 h-4 text-amber-500" /> My Submitted Projects &amp; Mentor Grades
                 </h3>
+
                 <div className="space-y-3">
                   {mySubmissions.map((sub) => (
-                    <div key={sub.id} className="p-4 rounded-xl bg-[#FAF8F5] border border-stone-200 text-xs space-y-2">
+                    <div
+                      key={sub.id}
+                      className="p-4 rounded-xl bg-[#FAF8F5] border border-stone-200 text-xs space-y-2"
+                    >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="font-bold text-sm text-stone-900">{sub.projectTitle}</div>
+                        <div className="font-bold text-sm text-stone-900">
+                          {sub.projectTitle}
+                        </div>
+
                         <span
                           className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider self-start sm:self-auto ${
                             sub.status === 'approved'
@@ -770,22 +919,46 @@ export const StudentPortalView: React.FC = () => {
                           {sub.status.replace('_', ' ')}
                         </span>
                       </div>
+
                       <div className="flex flex-wrap items-center gap-4 text-stone-600">
                         <span>Submitted: {sub.submittedAt}</span>
-                        <a href={sub.githubUrl} target="_blank" rel="noreferrer" className="text-[#FF6B16] hover:underline flex items-center gap-1 font-semibold">
+
+                        <a
+                          href={sub.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[#FF6B16] hover:underline flex items-center gap-1 font-semibold"
+                        >
                           <Github className="w-3.5 h-3.5" /> Repository
                         </a>
+
                         {sub.liveDemoUrl && (
-                          <a href={sub.liveDemoUrl} target="_blank" rel="noreferrer" className="text-[#FF6B16] hover:underline flex items-center gap-1 font-semibold">
+                          <a
+                            href={sub.liveDemoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[#FF6B16] hover:underline flex items-center gap-1 font-semibold"
+                          >
                             <ExternalLink className="w-3.5 h-3.5" /> Live Project
                           </a>
                         )}
                       </div>
+
                       {sub.grade && (
                         <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
-                          <div className="font-bold">Evaluation Grade: {sub.grade}</div>
-                          {sub.feedback && <p className="mt-1 text-emerald-800 font-normal">Feedback: "{sub.feedback}"</p>}
-                          <div className="text-[11px] text-emerald-700 mt-1">Reviewed by {sub.reviewedBy} on {sub.reviewedAt}</div>
+                          <div className="font-bold">
+                            Evaluation Grade: {sub.grade}
+                          </div>
+
+                          {sub.feedback && (
+                            <p className="mt-1 text-emerald-800 font-normal">
+                              Feedback: "{sub.feedback}"
+                            </p>
+                          )}
+
+                          <div className="text-[11px] text-emerald-700 mt-1">
+                            Reviewed by {sub.reviewedBy} on {sub.reviewedAt}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -794,83 +967,102 @@ export const StudentPortalView: React.FC = () => {
               </div>
             )}
 
-            {/* Project List */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {projectsList
-                .filter((p) => !selectedTrackFilter || p.track === selectedTrackFilter)
-                .map((proj) => {
-                  const existingSub = mySubmissions.find((s) => s.projectId === proj.id);
+              {trackProjects.map((proj) => {
+                const existingSub = mySubmissions.find(
+                  (s) => String(s.projectId) === String(proj.id)
+                );
 
-                  return (
-                    <div
-                      key={proj.id}
-                      className="p-6 rounded-2xl bg-white border border-stone-200 shadow-xs flex flex-col justify-between gap-5"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-md">
-                            {proj.track}
-                          </span>
-                          <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                            {proj.difficulty}
-                          </span>
-                        </div>
+                return (
+                  <div
+                    key={proj.id}
+                    className="p-6 rounded-2xl bg-white border border-stone-200 shadow-xs flex flex-col justify-between gap-5"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-stone-500 bg-stone-100 px-2.5 py-0.5 rounded-md">
+                          {proj.track}
+                        </span>
 
-                        <h3 className="text-base font-bold text-stone-900">{proj.title}</h3>
-                        <p className="text-xs text-stone-600">{proj.description}</p>
-
-                        <div className="space-y-1.5 pt-2 border-t border-stone-100">
-                          <div className="text-[11px] font-bold text-stone-700 uppercase tracking-wider">Required Deliverables:</div>
-                          <ul className="space-y-1 text-xs text-stone-600">
-                            {proj.deliverables.map((item, idx) => (
-                              <li key={idx} className="flex items-start gap-1.5">
-                                <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="flex items-center justify-between text-xs text-stone-500 pt-2 border-t border-stone-100">
-                          <span>Deadline: <strong className="text-stone-800">{proj.deadline}</strong></span>
-                          {proj.starterCodeUrl && (
-                            <a
-                              href={proj.starterCodeUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-[#FF6B16] hover:underline font-semibold flex items-center gap-1"
-                            >
-                              Starter Template <ExternalLink className="w-3 h-3" />
-                            </a>
-                          )}
-                        </div>
+                        <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                          {proj.difficulty}
+                        </span>
                       </div>
 
-                      <div className="pt-2">
-                        {existingSub ? (
-                          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between">
-                            <span className="font-semibold flex items-center gap-1.5">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Submitted ({existingSub.status.replace('_', ' ')})
-                            </span>
-                            <button
-                              onClick={() => setSelectedProjectForSubmit(proj.id)}
-                              className="text-emerald-900 font-bold hover:underline"
+                      <h3 className="text-base font-bold text-stone-900">
+                        {proj.title}
+                      </h3>
+
+                      <p className="text-xs text-stone-600">
+                        {proj.description}
+                      </p>
+
+                      <div className="space-y-1.5 pt-2 border-t border-stone-100">
+                        <div className="text-[11px] font-bold text-stone-700 uppercase tracking-wider">
+                          Required Deliverables:
+                        </div>
+
+                        <ul className="space-y-1 text-xs text-stone-600">
+                          {proj.deliverables.map((item, idx) => (
+                            <li
+                              key={idx}
+                              className="flex items-start gap-1.5"
                             >
-                              Update Code
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setSelectedProjectForSubmit(proj.id)}
-                            className="w-full py-2.5 px-4 text-xs font-bold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                              <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs text-stone-500 pt-2 border-t border-stone-100">
+                        <span>
+                          Deadline:{' '}
+                          <strong className="text-stone-800">
+                            {proj.deadline}
+                          </strong>
+                        </span>
+
+                        {proj.starterCodeUrl && (
+                          <a
+                            href={proj.starterCodeUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[#FF6B16] hover:underline font-semibold flex items-center gap-1"
                           >
-                            <Github className="w-3.5 h-3.5" /> Submit Project Links
-                          </button>
+                            Starter Template <ExternalLink className="w-3 h-3" />
+                          </a>
                         )}
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div className="pt-2">
+                      {existingSub ? (
+                        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center justify-between">
+                          <span className="font-semibold flex items-center gap-1.5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            Submitted ({existingSub.status.replace('_', ' ')})
+                          </span>
+
+                          <button
+                            onClick={() => setSelectedProjectForSubmit(proj.id)}
+                            className="text-emerald-900 font-bold hover:underline"
+                          >
+                            Update Code
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setSelectedProjectForSubmit(proj.id)}
+                          className="w-full py-2.5 px-4 text-xs font-bold text-white bg-[#FF6B16] hover:bg-orange-600 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                        >
+                          <Github className="w-3.5 h-3.5" /> Submit Project Links
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Submission Modal */}
@@ -878,7 +1070,10 @@ export const StudentPortalView: React.FC = () => {
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/40 backdrop-blur-xs p-4">
                 <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-xl border border-stone-200 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-stone-900 font-display">Submit Capstone Project</h3>
+                    <h3 className="text-lg font-bold text-stone-900 font-display">
+                      Submit Capstone Project
+                    </h3>
+
                     <button
                       onClick={() => setSelectedProjectForSubmit(null)}
                       className="text-stone-400 hover:text-stone-700"
@@ -891,9 +1086,15 @@ export const StudentPortalView: React.FC = () => {
                     Provide your public GitHub repository URL and any deployed live preview link for mentor evaluation.
                   </p>
 
-                  <form onSubmit={handleProjectSubmit} className="space-y-4 text-xs">
+                  <form
+                    onSubmit={handleProjectSubmit}
+                    className="space-y-4 text-xs"
+                  >
                     <div>
-                      <label className="block font-semibold text-stone-700 mb-1">GitHub Repository URL *</label>
+                      <label className="block font-semibold text-stone-700 mb-1">
+                        GitHub Repository URL *
+                      </label>
+
                       <input
                         type="url"
                         required
@@ -905,7 +1106,10 @@ export const StudentPortalView: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block font-semibold text-stone-700 mb-1">Live Application / Deployed URL (Optional)</label>
+                      <label className="block font-semibold text-stone-700 mb-1">
+                        Live Application / Deployed URL (Optional)
+                      </label>
+
                       <input
                         type="url"
                         value={liveDemoUrl}
@@ -916,7 +1120,10 @@ export const StudentPortalView: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block font-semibold text-stone-700 mb-1">Implementation Notes / Highlights</label>
+                      <label className="block font-semibold text-stone-700 mb-1">
+                        Implementation Notes / Highlights
+                      </label>
+
                       <textarea
                         rows={3}
                         value={submissionNotes}
@@ -934,6 +1141,7 @@ export const StudentPortalView: React.FC = () => {
                       >
                         Cancel
                       </button>
+
                       <button
                         type="submit"
                         className="px-5 py-2.5 bg-[#FF6B16] hover:bg-orange-600 text-white font-bold rounded-xl shadow-xs"
@@ -953,16 +1161,25 @@ export const StudentPortalView: React.FC = () => {
           <div className="space-y-6">
             <div className="p-6 rounded-2xl bg-white border border-stone-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <span className="text-xs text-orange-600 font-bold uppercase tracking-wider">{currentSyllabus.badge}</span>
+                <span className="text-xs text-orange-600 font-bold uppercase tracking-wider">
+                  {currentSyllabus.badge}
+                </span>
+
                 <h2 className="text-xl sm:text-2xl font-bold text-stone-900 font-display mt-0.5">
                   {currentSyllabus.trackName} Curriculum
                 </h2>
-                <p className="text-xs text-stone-500 mt-1">{currentSyllabus.description}</p>
+
+                <p className="text-xs text-stone-500 mt-1">
+                  {currentSyllabus.description}
+                </p>
               </div>
+
               <div className="text-xs bg-stone-50 border border-stone-200 p-3 rounded-xl flex items-center gap-3 shrink-0">
                 <div>
                   <div className="text-stone-400">Total Program Duration</div>
-                  <div className="font-bold text-stone-900 text-sm">{currentSyllabus.durationWeeks} Weeks Intensive</div>
+                  <div className="font-bold text-stone-900 text-sm">
+                    {currentSyllabus.durationWeeks} Weeks Intensive
+                  </div>
                 </div>
               </div>
             </div>
@@ -978,22 +1195,32 @@ export const StudentPortalView: React.FC = () => {
                       <span className="w-8 h-8 rounded-xl bg-orange-100 text-[#FF6B16] font-bold text-xs flex items-center justify-center shrink-0">
                         W{mod.weekNumber}
                       </span>
+
                       <div>
-                        <h3 className="font-bold text-stone-900 text-base">Module {mIdx + 1}: {mod.title}</h3>
-                        <p className="text-xs text-stone-500">{mod.summary}</p>
+                        <h3 className="font-bold text-stone-900 text-base">
+                          Module {mIdx + 1}: {mod.title}
+                        </h3>
+                        <p className="text-xs text-stone-500">
+                          {mod.summary}
+                        </p>
                       </div>
                     </div>
+
                     <span className="text-xs font-semibold px-2.5 py-1 bg-stone-100 rounded-lg text-stone-600 self-start sm:self-auto">
                       Week {mod.weekNumber} - {mod.weekNumber + 2}
                     </span>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="text-xs font-bold text-stone-700 uppercase tracking-wider">Topics &amp; Competencies:</div>
+                    <div className="text-xs font-bold text-stone-700 uppercase tracking-wider">
+                      Topics &amp; Competencies:
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                       {mod.topics.map((topic, tIdx) => {
                         const key = `${mod.id}-topic-${tIdx}`;
                         const isChecked = checkedTopics[key];
+
                         return (
                           <button
                             key={tIdx}
@@ -1013,6 +1240,7 @@ export const StudentPortalView: React.FC = () => {
                             >
                               {isChecked && <Check className="w-3 h-3" />}
                             </span>
+
                             <span>{topic}</span>
                           </button>
                         );
@@ -1024,7 +1252,10 @@ export const StudentPortalView: React.FC = () => {
                     <div className="p-3.5 rounded-xl bg-orange-50/70 border border-orange-200/80 text-xs text-orange-950 flex items-start gap-2.5">
                       <Sparkles className="w-4 h-4 text-[#FF6B16] shrink-0 mt-0.5" />
                       <div>
-                        <strong className="font-bold">Hands-On Engineering Lab:</strong> {mod.handsOnLab}
+                        <strong className="font-bold">
+                          Hands-On Engineering Lab:
+                        </strong>{' '}
+                        {mod.handsOnLab}
                       </div>
                     </div>
                   )}
@@ -1039,9 +1270,14 @@ export const StudentPortalView: React.FC = () => {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold text-stone-900 font-display">Slide Decks &amp; Presentation Library</h2>
-                <p className="text-xs text-stone-500">Official instructor slide presentations and technical reference decks.</p>
+                <h2 className="text-xl font-bold text-stone-900 font-display">
+                  Slide Decks &amp; Presentation Library
+                </h2>
+                <p className="text-xs text-stone-500">
+                  Official instructor slide presentations and technical reference decks.
+                </p>
               </div>
+
               <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700">
                 {relevantPPTs.length} Slide Decks Available
               </span>
@@ -1058,13 +1294,19 @@ export const StudentPortalView: React.FC = () => {
                       <span className="text-[11px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">
                         {deck.track}
                       </span>
+
                       <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-stone-100 text-stone-700">
                         {deck.fileType} · {deck.slidesCount} Slides
                       </span>
                     </div>
 
-                    <h3 className="text-base font-bold text-stone-900">{deck.title}</h3>
-                    <p className="text-xs text-stone-600">{deck.description}</p>
+                    <h3 className="text-base font-bold text-stone-900">
+                      {deck.title}
+                    </h3>
+
+                    <p className="text-xs text-stone-600">
+                      {deck.description}
+                    </p>
 
                     <div className="text-[11px] text-stone-400 pt-2 border-t border-stone-100 flex items-center justify-between">
                       <span>Uploaded by: {deck.uploadedBy}</span>
@@ -1079,7 +1321,8 @@ export const StudentPortalView: React.FC = () => {
                       rel="noreferrer"
                       className="w-full py-2 px-4 rounded-xl text-xs font-bold text-stone-800 bg-[#FAF8F5] border border-stone-300 hover:border-[#FF6B16] hover:text-[#FF6B16] transition-colors flex items-center justify-center gap-2"
                     >
-                      <Download className="w-3.5 h-3.5 text-[#FF6B16]" /> Download / View Slide Deck
+                      <Download className="w-3.5 h-3.5 text-[#FF6B16]" />
+                      Download / View Slide Deck
                     </a>
                   </div>
                 </div>
@@ -1092,15 +1335,24 @@ export const StudentPortalView: React.FC = () => {
         {activeTab === 'ask' && (
           <div className="max-w-2xl mx-auto bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-xs space-y-5">
             <div>
-              <h2 className="text-xl font-bold text-stone-900 font-display">Academic Mentorship &amp; Doubt Clearing</h2>
+              <h2 className="text-xl font-bold text-stone-900 font-display">
+                Academic Mentorship &amp; Doubt Clearing
+              </h2>
+
               <p className="text-xs text-stone-500 mt-1">
                 Post your technical code blockers or career questions. Instructors review queries daily.
               </p>
             </div>
 
-            <form onSubmit={handleAskMentor} className="space-y-4 text-xs">
+            <form
+              onSubmit={handleAskMentor}
+              className="space-y-4 text-xs"
+            >
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">Subject / Problem Area</label>
+                <label className="block font-semibold text-stone-700 mb-1">
+                  Subject / Problem Area
+                </label>
+
                 <input
                   type="text"
                   required
@@ -1112,7 +1364,10 @@ export const StudentPortalView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-700 mb-1">Detailed Description / Code Snippet</label>
+                <label className="block font-semibold text-stone-700 mb-1">
+                  Detailed Description / Code Snippet
+                </label>
+
                 <textarea
                   rows={5}
                   required
@@ -1127,7 +1382,8 @@ export const StudentPortalView: React.FC = () => {
                 type="submit"
                 className="w-full py-3 bg-[#FF6B16] hover:bg-orange-600 text-white font-bold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Send className="w-4 h-4" /> Dispatch Question to Mentors
+                <Send className="w-4 h-4" />
+                Dispatch Question to Mentors
               </button>
             </form>
           </div>
@@ -1138,10 +1394,8 @@ export const StudentPortalView: React.FC = () => {
           <StudentCertificateSection
             effectiveStudent={effectiveStudent}
             courseCompletionPercentage={effectiveCompletionPercentage}
-            onSetTestProgress={(pct) => setDemoProgressOverride(pct)}
           />
         )}
-
       </div>
     </div>
   );
