@@ -1213,12 +1213,24 @@ interface AppContextType {
   logoutUser: () => void;
   registerUser: (name: string, email: string, interest: string, phone?: string) => boolean;
 
+
   // User Directory Management (Admin oversight)
   usersList: AuthUser[];
   addUser: (user: Omit<AuthUser, 'id' | 'joinedAt'>) => void;
+
+  createStudent: (data: {
+    name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    courseTitle: string;
+    batch: string;
+  }) => Promise<void>;
+
   updateUser: (id: string | number, updates: Partial<AuthUser>) => void;
   deleteUser: (id: string | number) => void;
   impersonateUser: (user: AuthUser) => void;
+
 
   // Timetable & Class Schedules
   classesList: ClassSchedule[];
@@ -1654,17 +1666,29 @@ useEffect(() => {
   };
 
   // User Management
-  const addUser = (newUser: Omit<AuthUser, 'id' | 'joinedAt'>) => {
-    const user: AuthUser = {
-      ...newUser,
-      id: 'usr-' + Date.now(),
-      joinedAt: new Date().toISOString().split('T')[0],
-      status: 'active',
-    };
-    setUsersList((prev) => [user, ...prev]);
-    logAudit('Admin', 'ADMIN', 'USER_CREATE', `Created user ${user.name} (${user.role})`);
-    addToast('success', 'User Added', `Added ${user.name} to the platform directory.`);
+ const addUser = (newUser: Omit<AuthUser, 'id' | 'joinedAt'>) => {
+  const user: AuthUser = {
+    ...newUser,
+    id: 'usr-' + Date.now(),
+    joinedAt: new Date().toISOString().split('T')[0],
+    status: 'active',
   };
+
+  setUsersList((prev) => [user, ...prev]);
+
+  logAudit(
+    'Admin',
+    'ADMIN',
+    'USER_CREATE',
+    `Created user ${user.name} (${user.role})`
+  );
+
+  addToast(
+    'success',
+    'User Added',
+    `Added ${user.name} to the platform directory.`
+  );
+};
 
   const updateUser = (id: string | number, updates: Partial<AuthUser>) => {
     setUsersList((prev) => prev.map((u) => (String(u.id) === String(id) ? { ...u, ...updates } : u)));
