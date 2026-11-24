@@ -158,6 +158,16 @@ deleteLead: (id: string | number) => Promise<void>;
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const STORAGE_PREFIX = 'codemux_v2_';
+export const CODEMUX_COURSES = [
+  'Complete Frontend Web Development: HTML, CSS & JavaScript',
+  'Python Programming - Complete Course',
+  'Python Level 1 - Fundamentals',
+  'Python Level 2 - Intermediate & Advanced',
+  'ScratchJr - Creative Coding for Young Learners',
+  'Scratch Programming - Visual Coding & Game Development',
+  'English Language Skills - Grade-wise Learning Programme',
+  'Mathematics - Kindergarten to Grade 10',
+] as const;
 
 function getStored<T>(key: string, defVal: T): T {
   try {
@@ -259,7 +269,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
 
   const [isEarlyAccessModalOpen, setIsEarlyAccessModalOpen] = useState(false);
-  const [modalDefaultInterest, setModalDefaultInterest] = useState('Full-Stack Web Development');
+const [modalDefaultInterest, setModalDefaultInterest] = useState<string>(
+  CODEMUX_COURSES[0]
+);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Sync state to local storage
@@ -446,7 +458,7 @@ useEffect(() => {
       role,
       joinedAt: existing?.joinedAt || new Date().toISOString().split('T')[0],
       status: 'active',
-      track: track || existing?.track || (role === 'student' ? 'Full-Stack Web & Cloud Engineering (React, Node & AWS)' : undefined),
+      track: track || existing?.track || (role === 'student' ? CODEMUX_COURSES[0] : undefined),
       batch: batch || existing?.batch || (role === 'student' ? 'Cohort 2026-A' : undefined),
     };
 
@@ -747,7 +759,7 @@ mentorName: mentor?.name || '',
       studentId: student?.id || 'usr-student-1',
       studentName: student?.name || 'Student',
       studentEmail: student?.email || 'student@codemux.in',
-      track: proj?.track || student?.track || 'Full-Stack Web Development',
+      track: proj?.track || student?.track || CODEMUX_COURSES[0],
       githubUrl,
       liveDemoUrl,
       notes,
@@ -821,7 +833,9 @@ mentorName: mentor?.name || '',
   };
 
   // Early access & Inquiries
-  const openEarlyAccessModal = (defaultInterest = 'Full-Stack Web Development') => {
+const openEarlyAccessModal = (
+  defaultInterest: string = CODEMUX_COURSES[0]
+) => {
     setModalDefaultInterest(defaultInterest);
     setIsEarlyAccessModalOpen(true);
   };

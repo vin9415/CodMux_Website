@@ -1,6 +1,7 @@
 'use client';
+import { COUNTRY_CODES } from '../../data/countryCodes';
 import React, { useEffect, useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp, CODEMUX_COURSES } from '../../context/AppContext';
 import {
   Shield,
   Users,
@@ -178,9 +179,15 @@ useEffect(() => {
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
   const [newUserRole, setNewUserRole] = useState<UserRole>('student');
-  const [newUserTrack, setNewUserTrack] = useState('Full-Stack Web Development');
+const [newUserTrack, setNewUserTrack] = useState<string>(CODEMUX_COURSES[0]);
   const [newUserBatch, setNewUserBatch] = useState('Cohort 2026-A');
   const [newUserPhone, setNewUserPhone] = useState('');
+  const [newUserCountry, setNewUserCountry] = useState('IN');
+
+const selectedCountry = COUNTRY_CODES.find(
+  (country) => country.code === newUserCountry
+) || COUNTRY_CODES[0];
+  
   const [newUserPassword, setNewUserPassword] = useState('');
 const [isCreatingUser, setIsCreatingUser] = useState(false);
 
@@ -219,17 +226,14 @@ const handleCreateUser = async (e: React.FormEvent) => {
     return;
   }
 
-  if (newUserPhone.trim()) {
-    const phoneCheck = validatePhone(newUserPhone, false);
-    if (!phoneCheck.isValid) {
-      addToast(
-        'error',
-        'Phone Protection Error',
-        phoneCheck.error || 'Please enter a valid phone number.'
-      );
-      return;
-    }
-  }
+if (newUserPhone && !/^\d{10}$/.test(newUserPhone)) {
+  addToast(
+    'error',
+    'Invalid Phone Number',
+    'Please enter exactly 10 digits.'
+  );
+  return;
+}
 
   try {
     setIsCreatingUser(true);
@@ -245,7 +249,9 @@ const handleCreateUser = async (e: React.FormEvent) => {
         email: newUserEmail.trim().toLowerCase(),
         password: newUserPassword,
         role: newUserRole.toUpperCase(),
-        phone: sanitizePhone(newUserPhone) || null,
+        phone: newUserPhone
+  ? `${selectedCountry.dialCode}${newUserPhone}`
+  : null,
         track: newUserTrack,
         batch: newUserRole === 'student' ? newUserBatch : null,
       }),
@@ -283,9 +289,9 @@ const handleCreateUser = async (e: React.FormEvent) => {
     setNewUserName('');
     setNewUserEmail('');
     setNewUserPassword('');
-    setNewUserPhone('');
+    setNewUserCountry('IN');
     setNewUserRole('student');
-    setNewUserTrack('Full-Stack Web Development');
+   setNewUserTrack(CODEMUX_COURSES[0]);
     setNewUserBatch('Cohort 2026-A');
 
   } catch (error) {
@@ -898,47 +904,73 @@ const handleCreateUser = async (e: React.FormEvent) => {
                         </select>
                       </div>
 
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <label className="block font-semibold text-stone-700">Phone</label>
-                          <span className="text-[10px] text-stone-500 font-medium bg-stone-100 px-1.5 py-0.5 rounded">
-                            Digits only
-                          </span>
-                        </div>
-                        <input
-                          type="tel"
-                          inputMode="numeric"
-                          pattern="[0-9]*"
-                          maxLength={15}
-                          value={newUserPhone}
-                          onChange={(e) => setNewUserPhone(sanitizePhone(e.target.value))}
-                          placeholder="9876543210 (10 digits)"
-                          className="w-full px-3 py-2 rounded-xl border border-stone-300"
-                        />
-                      </div>
-                    </div>
+                    
+<div>
+  <div className="flex items-center justify-between mb-1">
+    <label className="block font-semibold text-stone-700">
+      Phone
+    </label>
+    <span className="text-[10px] text-stone-500 font-medium bg-stone-100 px-1.5 py-0.5 rounded">
+      Exactly 10 digits
+    </span>
+  </div>
 
-                    <div>
-                      <label className="block font-semibold text-stone-700 mb-1">Track Assignment</label>
-                      <select
-                        value={newUserTrack}
-                        onChange={(e) => setNewUserTrack(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white"
-                      >
-                        <optgroup label="🌟 Junior Foundation Academy">
-                          <option>Vedic Maths & Speed Mental Arithmetic</option>
-                          <option>English Mastery: Grammar, Spoken Fluency & Writing</option>
-                          <option>Hindi Vyakaran, Sahitya & Conversational Fluency</option>
-                          <option>Young Coders: Scratch & Creative Python</option>
-                        </optgroup>
-                        <optgroup label="💼 Career & Technical Specializations">
-                          <option>Full-Stack Web Development</option>
-                          <option>Data Analytics & BI</option>
-                          <option>Placement Preparation & Interview Mastery</option>
-                          <option>Python Programming & AI Essentials</option>
-                        </optgroup>
-                      </select>
-                    </div>
+  <div className="flex gap-2">
+    <select
+      value={newUserCountry}
+      onChange={(e) => setNewUserCountry(e.target.value)}
+      className="w-[42%] min-w-0 px-2 py-2 rounded-xl border border-stone-300 bg-white"
+      aria-label="Country calling code"
+    >
+      {COUNTRY_CODES.map((country) => (
+        <option key={country.code} value={country.code}>
+          {country.flag} {country.dialCode}
+        </option>
+      ))}
+    </select>
+
+    <input
+      type="tel"
+      inputMode="numeric"
+      pattern="[0-9]{10}"
+      maxLength={10}
+      value={newUserPhone}
+      onChange={(e) =>
+        setNewUserPhone(
+          e.target.value.replace(/[^0-9]/g, '').slice(0, 10)
+        )
+      }
+      placeholder="9876543210"
+      className="w-[58%] min-w-0 px-3 py-2 rounded-xl border border-stone-300"
+          title="Enter exactly 10 digits"
+    />
+  </div>
+</div>
+</div>
+
+
+  <label className="block font-semibold text-stone-700 mb-1">
+    Track Assignment
+  </label>
+
+
+                   <div>
+  <label className="block font-semibold text-stone-700 mb-1">
+    Track Assignment
+  </label>
+
+  <select
+    value={newUserTrack}
+    onChange={(e) => setNewUserTrack(e.target.value)}
+    className="w-full px-3 py-2 rounded-xl border border-stone-300 bg-white"
+  >
+    {CODEMUX_COURSES.map((course) => (
+      <option key={course} value={course}>
+        {course}
+      </option>
+    ))}
+  </select>
+</div>
 
                     {newUserRole === 'student' && (
                       <div>
