@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Shield,
@@ -77,6 +77,97 @@ deleteLead,
     navigateTo,
   } = useApp();
 
+  // Load real users from PostgreSQL
+const [directoryUsers, setDirectoryUsers] = useState<AuthUser[]>([]);
+const [usersLoading, setUsersLoading] = useState(true);
+const [usersError, setUsersError] = useState('');
+
+useEffect(() => {
+  let cancelled = false;
+
+  const loadUsers = async () => {
+    try {
+      setUsersLoading(true);
+
+      const response = await fetch('/api/admin/users', {
+        cache: 'no-store',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to load users');
+      }
+
+      if (!cancelled) {
+        setDirectoryUsers(data.users || []);
+        setUsersError('');
+      }
+    } catch (error) {
+      if (!cancelled) {
+        setUsersError(
+          error instanceof Error ? error.message : 'Failed to load users'
+        );
+      }
+    } finally {
+      if (!cancelled) {
+        setUsersLoading(false);
+      }
+    }
+  };
+
+  loadUsers();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
+    // Database-driven Admin Dashboard statistics
+  const [dashboardStats, setDashboardStats] = useState({
+    totalStudents: 0,
+    totalMentors: 0,
+    upcomingClasses: 0,
+    pendingSubmissions: 0,
+  });
+
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchDashboardStats = async () => {
+      try {
+        const response = await fetch('/api/admin/dashboard', {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
+        });
+
+        if (!response.ok) {
+          throw new Error('Unable to fetch dashboard statistics.');
+        }
+
+        const data = await response.json();
+
+        if (isMounted) {
+          setDashboardStats(data);
+        }
+      } catch (error) {
+        console.error('Dashboard statistics error:', error);
+      } finally {
+        if (isMounted) {
+          setStatsLoading(false);
+        }
+      }
+    };
+
+    fetchDashboardStats();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Active top-level admin tab
   const [adminTab, setAdminTab] = useState<
     'overview' | 'users' | 'timetable' | 'attendance' | 'projects' | 'syllabus' | 'ppts' | 'leads' | 'broadcast' | 'certificates'
@@ -90,48 +181,124 @@ deleteLead,
   const [newUserTrack, setNewUserTrack] = useState('Full-Stack Web Development');
   const [newUserBatch, setNewUserBatch] = useState('Cohort 2026-A');
   const [newUserPhone, setNewUserPhone] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+const [isCreatingUser, setIsCreatingUser] = useState(false);
 
-  const handleCreateUser = (e: React.FormEvent) => {
-    e.preventDefault();
 
-    // 1. Strict Name validation (alphabets only)
-    const nameCheck = validateName(newUserName);
-    if (!nameCheck.isValid) {
-      addToast('error', 'Name Protection Error', nameCheck.error || 'Name can only contain alphabets and spaces.');
+const handleCreateUser = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (isCreatingUser) return;
+
+  const nameCheck = validateName(newUserName);
+  if (!nameCheck.isValid) {
+    addToast(
+      'error',
+      'Name Protection Error',
+      nameCheck.error || 'Please enter a valid name.'
+    );
+    return;
+  }
+
+  const emailCheck = validateEmail(newUserEmail);
+  if (!emailCheck.isValid) {
+    addToast(
+      'error',
+      'Invalid Email',
+      emailCheck.error || 'Please enter a valid email address.'
+    );
+    return;
+  }
+
+  if (newUserPassword.length < 6) {
+    addToast(
+      'error',
+      'Invalid Password',
+      'Password must be at least 6 characters long.'
+    );
+    return;
+  }
+
+  if (newUserPhone.trim()) {
+    const phoneCheck = validatePhone(newUserPhone, false);
+    if (!phoneCheck.isValid) {
+      addToast(
+        'error',
+        'Phone Protection Error',
+        phoneCheck.error || 'Please enter a valid phone number.'
+      );
       return;
     }
+  }
 
-    // 2. Strict Email validation
-    const emailCheck = validateEmail(newUserEmail);
-    if (!emailCheck.isValid) {
-      addToast('error', 'Invalid Email', emailCheck.error || 'Please enter a valid email address.');
-      return;
-    }
+  try {
+    setIsCreatingUser(true);
 
-    // 3. Strict Phone validation (digits only)
-    if (newUserPhone.trim()) {
-      const phoneCheck = validatePhone(newUserPhone, false);
-      if (!phoneCheck.isValid) {
-        addToast('error', 'Phone Protection Error', phoneCheck.error || 'Phone must contain numerical digits only.');
-        return;
-      }
-    }
-
-    const cleanPhone = sanitizePhone(newUserPhone);
-    addUser({
-      name: newUserName.trim(),
-      email: newUserEmail.trim(),
-      role: newUserRole,
-      track: newUserTrack,
-      batch: newUserRole === 'student' ? newUserBatch : undefined,
-      phone: cleanPhone || undefined,
-      status: 'active',
+    const response = await fetch('/api/admin/users', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: newUserName.trim(),
+        email: newUserEmail.trim().toLowerCase(),
+        password: newUserPassword,
+        role: newUserRole.toUpperCase(),
+        phone: sanitizePhone(newUserPhone) || null,
+        track: newUserTrack,
+        batch: newUserRole === 'student' ? newUserBatch : null,
+      }),
     });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Unable to create account.');
+    }
+
+    // Refresh the directory from PostgreSQL
+    const usersResponse = await fetch('/api/admin/users', {
+      credentials: 'include',
+      cache: 'no-store',
+    });
+
+    const usersData = await usersResponse.json();
+
+    if (!usersResponse.ok) {
+      throw new Error(
+        'Account was created, but the directory could not be refreshed. Please refresh the page.'
+      );
+    }
+
+    setDirectoryUsers(usersData.users || []);
+
+    addToast(
+      'success',
+      'Account Created',
+      data.message || 'User account created successfully.'
+    );
+
     setIsAddUserOpen(false);
     setNewUserName('');
     setNewUserEmail('');
+    setNewUserPassword('');
     setNewUserPhone('');
-  };
+    setNewUserRole('student');
+    setNewUserTrack('Full-Stack Web Development');
+    setNewUserBatch('Cohort 2026-A');
+
+  } catch (error) {
+    addToast(
+      'error',
+      'Account Creation Failed',
+      error instanceof Error ? error.message : 'Something went wrong.'
+    );
+  } finally {
+    setIsCreatingUser(false);
+  }
+};
+
 
   // ================= TIMETABLE MODAL STATE =================
   const [isScheduleClassOpen, setIsScheduleClassOpen] = useState(false);
@@ -239,11 +406,7 @@ deleteLead,
     setBroadcastContent('');
   };
 
-  // Quick Stats
-  const totalStudents = usersList.filter((u) => u.role === 'student').length;
-  const totalMentors = usersList.filter((u) => u.role === 'mentor').length;
-  const upcomingClasses = classesList.filter((c) => c.status === 'upcoming').length;
-  const pendingSubmissions = submissionsList.filter((s) => s.status === 'pending_review').length;
+
 
   return (
     <div className="w-full py-8 sm:py-12 bg-[#FAF8F5] min-h-screen">
@@ -296,35 +459,66 @@ deleteLead,
           </div>
         </div>
 
-        {/* Global Stats bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
-            <div className="text-xs text-stone-500 font-bold uppercase">Enrolled Students</div>
-            <div className="text-2xl font-bold text-stone-900 mt-1">{totalStudents}</div>
-            <div className="text-[11px] text-emerald-700 font-semibold mt-0.5">Active Learners</div>
-          </div>
-          <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
-            <div className="text-xs text-stone-500 font-bold uppercase">Technical Mentors</div>
-            <div className="text-2xl font-bold text-stone-900 mt-1">{totalMentors}</div>
-            <div className="text-[11px] text-amber-700 font-semibold mt-0.5">Assigned to Cohorts</div>
-          </div>
-          <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
-            <div className="text-xs text-stone-500 font-bold uppercase">Upcoming Classes</div>
-            <div className="text-2xl font-bold text-stone-900 mt-1">{upcomingClasses}</div>
-            <div className="text-[11px] text-[#FF6B16] font-semibold mt-0.5">Scheduled this week</div>
-          </div>
-          <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
-            <div className="text-xs text-stone-500 font-bold uppercase">Pending Submissions</div>
-            <div className="text-2xl font-bold text-stone-900 mt-1">{pendingSubmissions}</div>
-            <div className="text-[11px] text-blue-700 font-semibold mt-0.5">Awaiting Grading</div>
-          </div>
-        </div>
+
+{/* Global Stats bar */}
+<div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+  <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
+    <div className="text-xs text-stone-500 font-bold uppercase">
+      Enrolled Students
+    </div>
+    <div className="text-2xl font-bold text-stone-900 mt-1">
+      {statsLoading ? '...' : dashboardStats.totalStudents}
+    </div>
+    <div className="text-[11px] text-emerald-700 font-semibold mt-0.5">
+      Active Learners
+    </div>
+  </div>
+
+  <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
+    <div className="text-xs text-stone-500 font-bold uppercase">
+      Technical Mentors
+    </div>
+    <div className="text-2xl font-bold text-stone-900 mt-1">
+      {statsLoading ? '...' : dashboardStats.totalMentors}
+    </div>
+    <div className="text-[11px] text-amber-700 font-semibold mt-0.5">
+      Registered Mentors
+    </div>
+  </div>
+
+  <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
+    <div className="text-xs text-stone-500 font-bold uppercase">
+      Upcoming Classes
+    </div>
+    <div className="text-2xl font-bold text-stone-900 mt-1">
+      {statsLoading ? '...' : dashboardStats.upcomingClasses}
+    </div>
+    <div className="text-[11px] text-[#FF6B16] font-semibold mt-0.5">
+      Scheduled This Week
+    </div>
+  </div>
+
+  <div className="p-4 rounded-2xl bg-white border border-stone-200 shadow-xs">
+    <div className="text-xs text-stone-500 font-bold uppercase">
+      Pending Submissions
+    </div>
+    <div className="text-2xl font-bold text-stone-900 mt-1">
+      {statsLoading ? '...' : dashboardStats.pendingSubmissions}
+    </div>
+    <div className="text-[11px] text-blue-700 font-semibold mt-0.5">
+      Awaiting Grading
+    </div>
+  </div>
+
+</div>
+
 
         {/* Main Admin Tab Navigation */}
         <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-white rounded-2xl border border-stone-200 shadow-xs">
           {[
             { id: 'overview', label: 'Dashboard', icon: TrendingUp },
-            { id: 'users', label: `Users & Mentors (${usersList.length})`, icon: Users },
+            { id: 'users', label: `Users & Mentors (${usersLoading ? '...' : directoryUsers.length})`, icon: Users },
             { id: 'timetable', label: `Timetable (${classesList.length})`, icon: Calendar },
             { id: 'attendance', label: `Attendance Master (${attendanceList.length})`, icon: UserCheck },
             { id: 'projects', label: `Projects & Grades (${projectsList.length})`, icon: Award },
@@ -547,7 +741,26 @@ deleteLead,
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-100 text-stone-800">
-                    {usersList.map((user) => (
+                    {usersLoading ? (
+  <tr>
+    <td colSpan={7} className="py-8 text-center text-stone-500">
+      Loading users from database...
+    </td>
+  </tr>
+) : usersError ? (
+  <tr>
+    <td colSpan={7} className="py-8 text-center text-red-600">
+      {usersError}
+    </td>
+  </tr>
+) : directoryUsers.length === 0 ? (
+  <tr>
+    <td colSpan={7} className="py-8 text-center text-stone-500">
+      No registered users found.
+    </td>
+  </tr>
+) : (
+  directoryUsers.map((user) => (
                       <tr key={user.id} className="hover:bg-stone-50/50 transition-colors">
                         <td className="py-3 px-4 font-bold text-stone-900 flex items-center gap-2">
                           {user.role === 'admin' ? (
@@ -601,7 +814,8 @@ deleteLead,
                           )}
                         </td>
                       </tr>
-                    ))}
+                    ))
+)}
                   </tbody>
                 </table>
               </div>
@@ -654,6 +868,21 @@ deleteLead,
                         className="w-full px-3 py-2 rounded-xl border border-stone-300"
                       />
                     </div>
+                    <div>
+  <label className="block font-semibold text-stone-700 mb-1">
+    Login Password *
+  </label>
+  <input
+    type="password"
+    required
+    minLength={6}
+    autoComplete="new-password"
+    value={newUserPassword}
+    onChange={(e) => setNewUserPassword(e.target.value)}
+    placeholder="Create password (minimum 6 characters)"
+    className="w-full px-3 py-2 rounded-xl border border-stone-300"
+  />
+</div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
@@ -665,7 +894,7 @@ deleteLead,
                         >
                           <option value="student">Student</option>
                           <option value="mentor">Mentor</option>
-                          <option value="admin">Admin</option>
+                          
                         </select>
                       </div>
 
@@ -731,12 +960,13 @@ deleteLead,
                       >
                         Cancel
                       </button>
-                      <button
-                        type="submit"
-                        className="px-4 py-2 bg-[#FF6B16] text-white font-bold rounded-xl shadow-xs"
-                      >
-                        Create User
-                      </button>
+                     <button
+  type="submit"
+  disabled={isCreatingUser}
+  className="px-4 py-2 bg-[#FF6B16] text-white font-bold rounded-xl shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {isCreatingUser ? 'Creating Account...' : 'Create User'}
+</button>
                     </div>
                   </form>
                 </div>
