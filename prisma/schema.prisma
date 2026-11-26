@@ -269,3 +269,17 @@ model Enrollment {
   @@index([courseId])
   @@index([status])
 }
+
+model SyllabusTrack {
+  id            String   @id @default(cuid())
+  trackName     String
+  badge         String
+  description   String   @db.Text
+  durationWeeks Int
+  modules       Json
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("syllabus_tracks")
+}

@@ -250,76 +250,216 @@ const [mentorAttendanceList, setMentorAttendanceList] = useState<MentorAttendanc
 
 
 
-  // Syllabus
-const [syllabusTracks, setSyllabusTracks] = useState<SyllabusTrack[]>(() =>
-  getStored<SyllabusTrack[]>('syllabusTracks', [])
-);
+ 
+  // Syllabus & Curriculum — connected to Neon PostgreSQL
+  const [syllabusTracks, setSyllabusTracks] = useState<SyllabusTrack[]>([]);
 
+  // Load syllabus tracks from the database
+  useEffect(() => {
+    let cancelled = false;
 
-const updateSyllabusModule = (
-  trackId: string | number,
-  module: SyllabusModule
-) => {
-  setSyllabusTracks((prev) =>
-    prev.map((track) => {
-      if (String(track.id) !== String(trackId)) return track;
+    const loadSyllabus = async () => {
+      try {
+        const response = await fetch('/api/syllabus', {
+          cache: 'no-store',
+        });
 
-      const modIdx = track.modules.findIndex(
-        (m) => String(m.id) === String(module.id)
-      );
+        if (!response.ok) {
+          throw new Error('Unable to load syllabus.');
+        }
 
-      const newMods = [...track.modules];
+        const data = await response.json();
 
-      if (modIdx >= 0) {
-        newMods[modIdx] = module;
-      } else {
-        newMods.push(module);
+        if (!cancelled) {
+          setSyllabusTracks(
+            data.map((track: any) => ({
+              ...track,
+              id: String(track.id),
+              modules: Array.isArray(track.modules) ? track.modules : [],
+            }))
+          );
+        }
+      } catch (error) {
+        console.error('Syllabus loading error:', error);
+
+        if (!cancelled) {
+          addToast(
+            'error',
+            'Syllabus Loading Failed',
+            'Unable to load syllabus from the database.'
+          );
+        }
+      }
+    };
+
+    loadSyllabus();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Update an individual module
+  const updateSyllabusModule = async (
+    trackId: string | number,
+    module: SyllabusModule
+  ) => {
+    const existingTrack = syllabusTracks.find(
+      (track) => String(track.id) === String(trackId)
+    );
+
+    if (!existingTrack) return;
+
+    const moduleIndex = existingTrack.modules.findIndex(
+      (item) => String(item.id) === String(module.id)
+    );
+
+    const updatedModules = [...existingTrack.modules];
+
+    if (moduleIndex >= 0) {
+      updatedModules[moduleIndex] = module;
+    } else {
+      updatedModules.push(module);
+    }
+
+    await updateSyllabusTrack({
+      ...existingTrack,
+      modules: updatedModules,
+    });
+  };
+
+  // Update an existing syllabus track
+  const updateSyllabusTrack = async (track: SyllabusTrack) => {
+    try {
+      const response = await fetch('/api/syllabus', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(track),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to update syllabus.');
       }
 
-      return { ...track, modules: newMods };
-    })
-  );
+      setSyllabusTracks((prev) =>
+        prev.map((item) =>
+          String(item.id) === String(result.id)
+            ? {
+                ...result,
+                id: String(result.id),
+                modules: Array.isArray(result.modules)
+                  ? result.modules
+                  : [],
+              }
+            : item
+        )
+      );
 
-  addToast('success', 'Syllabus Updated', 'Course module outline updated.');
-};
+      addToast(
+        'success',
+        'Syllabus Updated',
+        `${track.trackName} has been updated successfully.`
+      );
+    } catch (error) {
+      console.error('Syllabus update error:', error);
 
-const updateSyllabusTrack = (updatedTrack: SyllabusTrack) => {
-  setSyllabusTracks((prev) =>
-    prev.map((track) =>
-      String(track.id) === String(updatedTrack.id)
-        ? updatedTrack
-        : track
-    )
-  );
+      addToast(
+        'error',
+        'Update Failed',
+        error instanceof Error ? error.message : 'Please try again.'
+      );
+    }
+  };
 
-  addToast(
-    'success',
-    'Syllabus Updated',
-    `${updatedTrack.trackName} has been updated successfully.`
-  );
-};
+  // Add a new syllabus track
+  const addSyllabusTrack = async (track: SyllabusTrack) => {
+    try {
+      const response = await fetch('/api/syllabus', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          trackName: track.trackName,
+          badge: track.badge,
+          description: track.description,
+          durationWeeks: track.durationWeeks,
+          modules: track.modules,
+        }),
+      });
 
-const addSyllabusTrack = (track: SyllabusTrack) => {
-  setSyllabusTracks((prev) => [...prev, track]);
+      const result = await response.json();
 
-  addToast(
-    'success',
-    'Syllabus Added',
-    `${track.trackName} has been added successfully.`
-  );
-};
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to add syllabus.');
+      }
 
-const deleteSyllabusTrack = (trackId: string | number) => {
-  setSyllabusTracks((prev) =>
-    prev.filter((track) => String(track.id) !== String(trackId))
-  );
+      const savedTrack: SyllabusTrack = {
+        ...result,
+        id: String(result.id),
+        modules: Array.isArray(result.modules) ? result.modules : [],
+      };
 
-  addToast(
-    'success',
-    'Syllabus Removed',
-    'The course syllabus has been removed.'
-  );
-};
+      setSyllabusTracks((prev) => [...prev, savedTrack]);
+
+      addToast(
+        'success',
+        'Syllabus Added',
+        `${savedTrack.trackName} has been added successfully.`
+      );
+    } catch (error) {
+      console.error('Syllabus creation error:', error);
+
+      addToast(
+        'error',
+        'Unable to Add Syllabus',
+        error instanceof Error ? error.message : 'Please try again.'
+      );
+    }
+  };
+
+  // Delete a syllabus track
+  const deleteSyllabusTrack = async (trackId: string | number) => {
+    try {
+      const response = await fetch('/api/syllabus', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: String(trackId),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete syllabus.');
+      }
+
+      setSyllabusTracks((prev) =>
+        prev.filter((track) => String(track.id) !== String(trackId))
+      );
+
+      addToast(
+        'success',
+        'Syllabus Removed',
+        'The course syllabus has been removed.'
+      );
+    } catch (error) {
+      console.error('Syllabus deletion error:', error);
+
+      addToast(
+        'error',
+        'Unable to Remove Syllabus',
+        error instanceof Error ? error.message : 'Please try again.'
+      );
+    }
+  };
 
 
   // Early Access & Inquiries
@@ -353,7 +493,7 @@ const [modalDefaultInterest, setModalDefaultInterest] = useState<string>(
   useEffect(() => { save('projectsList', projectsList); }, [projectsList]);
   useEffect(() => { save('submissionsList', submissionsList); }, [submissionsList]);
   useEffect(() => { save('presentationsList', presentationsList); }, [presentationsList]);
-  useEffect(() => { save('syllabusTracks', syllabusTracks); }, [syllabusTracks]);
+
  
 // Load leads and inquiries from PostgreSQL for ADMIN users
 useEffect(() => {
