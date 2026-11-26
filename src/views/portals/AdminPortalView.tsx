@@ -31,7 +31,13 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { Github } from '../../components/GithubIcon';
-import { AuthUser, ClassSchedule, ProjectItem, UserRole } from '../../types';
+import {
+  AuthUser,
+  ClassSchedule,
+  ProjectItem,
+  UserRole,
+  SyllabusTrack,
+} from '../../types';
 import {
   sanitizeName,
   sanitizePhone,
@@ -66,6 +72,7 @@ export const AdminPortalView: React.FC = () => {
     addPresentation,
     deletePresentation,
     syllabusTracks,
+    updateSyllabusTrack,
     earlyAccessList,
 updateLeadStatus,
 deleteLead,
@@ -403,6 +410,90 @@ if (newUserPhone && !/^\d{10}$/.test(newUserPhone)) {
   const [broadcastTitle, setBroadcastTitle] = useState('');
   const [broadcastContent, setBroadcastContent] = useState('');
   const [broadcastRole, setBroadcastRole] = useState<'all' | 'student' | 'mentor'>('all');
+  // ================= SYLLABUS EDITOR STATE =================
+const [editingSyllabus, setEditingSyllabus] =
+  useState<SyllabusTrack | null>(null);
+
+const openSyllabusEditor = (track: SyllabusTrack) => {
+  // Work on a copy so Cancel does not change the displayed syllabus.
+  setEditingSyllabus(JSON.parse(JSON.stringify(track)));
+};
+
+const handleSaveSyllabus = () => {
+  if (!editingSyllabus) return;
+
+  if (!editingSyllabus.trackName.trim()) {
+    addToast('error', 'Missing Course Title', 'Please enter a course title.');
+    return;
+  }
+
+  if (editingSyllabus.durationWeeks < 1) {
+    addToast('error', 'Invalid Duration', 'Duration must be at least 1 week.');
+    return;
+  }
+
+  if (editingSyllabus.modules.length === 0) {
+    addToast('error', 'No Modules', 'A course must have at least one module.');
+    return;
+  }
+
+  const hasIncompleteModule = editingSyllabus.modules.some(
+    (module) =>
+      !module.title.trim() ||
+      !module.summary.trim() ||
+      !module.handsOnLab.trim() ||
+      module.weekNumber < 1
+  );
+
+  if (hasIncompleteModule) {
+    addToast(
+      'error',
+      'Incomplete Module',
+      'Please complete every module title, week number, description and lab.'
+    );
+    return;
+  }
+
+  updateSyllabusTrack(editingSyllabus);
+  setEditingSyllabus(null);
+};
+
+const handleAddSyllabusModule = () => {
+  if (!editingSyllabus) return;
+
+  const nextWeek =
+    editingSyllabus.modules.length > 0
+      ? Math.max(...editingSyllabus.modules.map((m) => m.weekNumber)) + 1
+      : 1;
+
+  const newModule = {
+  id: `module-${Date.now()}`,
+  weekNumber: nextWeek,
+  title: '',
+  summary: '',
+  handsOnLab: '',
+  topics: [],
+};
+
+  setEditingSyllabus((prev) =>
+    prev
+      ? { ...prev, modules: [...prev.modules, newModule] }
+      : prev
+  );
+};
+
+const handleRemoveSyllabusModule = (moduleId: string | number) => {
+  setEditingSyllabus((prev) =>
+    prev
+      ? {
+          ...prev,
+          modules: prev.modules.filter(
+            (module) => String(module.id) !== String(moduleId)
+          ),
+        }
+      : prev
+  );
+};
 
   const handleBroadcast = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1529,42 +1620,385 @@ if (newUserPhone && !/^\d{10}$/.test(newUserPhone)) {
           </div>
         )}
 
-        {/* TAB: SYLLABUS EDITOR */}
-        {adminTab === 'syllabus' && (
-          <div className="space-y-6">
+      
+{/* TAB: SYLLABUS EDITOR */}
+{adminTab === 'syllabus' && (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-xl font-bold text-stone-900 font-display">
+        Curriculum &amp; Syllabus Manager
+      </h2>
+      <p className="text-xs text-stone-500">
+        Manage course details, duration and modules across all learning tracks.
+      </p>
+    </div>
+
+    <div className="space-y-6">
+      {syllabusTracks.map((trk) => (
+        <div
+          key={trk.id}
+          className="p-6 rounded-2xl bg-white border border-stone-200 shadow-xs space-y-4"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
             <div>
-              <h2 className="text-xl font-bold text-stone-900 font-display">Curriculum &amp; Syllabus Manager</h2>
-              <p className="text-xs text-stone-500">Review structured module breakdowns across all 4 learning tracks.</p>
+              <span className="text-xs text-[#FF6B16] font-bold uppercase">
+                {trk.badge}
+              </span>
+
+              <h3 className="text-lg font-bold text-stone-900">
+                {trk.trackName}
+              </h3>
+
+              <p className="text-xs text-stone-500">
+                {trk.description}
+              </p>
+
+              <p className="text-xs text-stone-500 mt-1">
+                {trk.modules.length} Modules
+              </p>
             </div>
 
-            <div className="space-y-6">
-              {syllabusTracks.map((trk) => (
-                <div key={trk.id} className="p-6 rounded-2xl bg-white border border-stone-200 shadow-xs space-y-4">
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-                    <div>
-                      <span className="text-xs text-[#FF6B16] font-bold uppercase">{trk.badge}</span>
-                      <h3 className="text-lg font-bold text-stone-900">{trk.trackName}</h3>
-                      <p className="text-xs text-stone-500">{trk.description}</p>
-                    </div>
-                    <span className="text-xs font-semibold px-3 py-1 bg-stone-100 rounded-lg text-stone-700">
-                      {trk.durationWeeks} Weeks
-                    </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold px-3 py-1 bg-stone-100 rounded-lg text-stone-700">
+                {trk.durationWeeks} Weeks
+              </span>
+
+              <button
+                type="button"
+                onClick={() => openSyllabusEditor(trk)}
+                className="px-4 py-2 rounded-xl bg-[#FF6B16] hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-2 transition-colors"
+              >
+                <Edit className="w-3.5 h-3.5" />
+                Edit Syllabus
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            {trk.modules.map((m, idx) => (
+              <div
+                key={m.id}
+                className="p-3.5 rounded-xl bg-[#FAF8F5] border border-stone-200 space-y-1.5"
+              >
+                <div className="font-bold text-stone-900">
+                  Module {idx + 1} (W{m.weekNumber}): {m.title}
+                </div>
+
+                <p className="text-stone-600">
+                  {m.summary}
+                </p>
+
+                <div className="text-[11px] text-[#FF6B16] font-semibold">
+                  Lab: {m.handsOnLab}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* EDIT SYLLABUS MODAL */}
+    {editingSyllabus && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/60 backdrop-blur-sm p-3 sm:p-6">
+        <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl border border-stone-200">
+
+          {/* Modal Header */}
+          <div className="sticky top-0 z-10 bg-white border-b border-stone-200 p-5 sm:p-6 flex items-center justify-between">
+            <div>
+              <h3 className="text-lg sm:text-xl font-bold text-stone-900">
+                Edit Course Syllabus
+              </h3>
+              <p className="text-xs text-stone-500 mt-1">
+                Update course information and manage modules.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setEditingSyllabus(null)}
+              className="text-stone-400 hover:text-rose-600"
+            >
+              <XCircle className="w-6 h-6" />
+            </button>
+          </div>
+
+          <div className="p-5 sm:p-6 space-y-6">
+
+            {/* COURSE DETAILS */}
+            <section className="space-y-4">
+              <h4 className="font-bold text-stone-900">
+                Course Information
+              </h4>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Course Title *
+                </label>
+
+                <input
+                  type="text"
+                  value={editingSyllabus.trackName}
+                  onChange={(e) =>
+                    setEditingSyllabus((prev) =>
+                      prev ? { ...prev, trackName: e.target.value } : prev
+                    )
+                  }
+                  className="w-full p-3 rounded-xl border border-stone-300 text-sm focus:border-[#FF6B16] outline-none"
+                  placeholder="Enter course title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Track Badge / Category
+                </label>
+
+                <input
+                  type="text"
+                  value={editingSyllabus.badge}
+                  onChange={(e) =>
+                    setEditingSyllabus((prev) =>
+                      prev ? { ...prev, badge: e.target.value } : prev
+                    )
+                  }
+                  className="w-full p-3 rounded-xl border border-stone-300 text-sm focus:border-[#FF6B16] outline-none"
+                  placeholder="e.g. FLAGSHIP ENGINEERING TRACK"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Course Description
+                </label>
+
+                <textarea
+                  rows={3}
+                  value={editingSyllabus.description}
+                  onChange={(e) =>
+                    setEditingSyllabus((prev) =>
+                      prev ? { ...prev, description: e.target.value } : prev
+                    )
+                  }
+                  className="w-full p-3 rounded-xl border border-stone-300 text-sm focus:border-[#FF6B16] outline-none resize-y"
+                  placeholder="Describe this course"
+                />
+              </div>
+
+              <div className="max-w-xs">
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Course Duration (Weeks) *
+                </label>
+
+                <input
+                  type="number"
+                  min="1"
+                  value={editingSyllabus.durationWeeks}
+                  onChange={(e) =>
+                    setEditingSyllabus((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            durationWeeks: Number(e.target.value),
+                          }
+                        : prev
+                    )
+                  }
+                  className="w-full p-3 rounded-xl border border-stone-300 text-sm focus:border-[#FF6B16] outline-none"
+                />
+              </div>
+            </section>
+
+            {/* MODULE MANAGEMENT */}
+            <section className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h4 className="font-bold text-stone-900">
+                    Course Modules ({editingSyllabus.modules.length})
+                  </h4>
+                  <p className="text-xs text-stone-500 mt-1">
+                    Add, remove or edit as many modules as your course needs.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddSyllabusModule}
+                  className="px-4 py-2.5 rounded-xl bg-orange-50 border border-orange-200 text-[#FF6B16] hover:bg-orange-100 text-xs font-bold flex items-center justify-center gap-2"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  Add Module
+                </button>
+              </div>
+
+              {editingSyllabus.modules.map((module, index) => (
+                <div
+                  key={module.id}
+                  className="p-4 sm:p-5 rounded-2xl border border-stone-200 bg-[#FAF8F5] space-y-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <h5 className="font-bold text-sm text-stone-900">
+                      Module {index + 1}
+                    </h5>
+
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveSyllabusModule(module.id)}
+                      className="px-2.5 py-1.5 rounded-lg text-rose-600 hover:bg-rose-50 text-xs font-semibold flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Remove
+                    </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                    {trk.modules.map((m, idx) => (
-                      <div key={m.id} className="p-3.5 rounded-xl bg-[#FAF8F5] border border-stone-200 space-y-1.5">
-                        <div className="font-bold text-stone-900">Module {idx + 1} (W{m.weekNumber}): {m.title}</div>
-                        <p className="text-stone-600">{m.summary}</p>
-                        <div className="text-[11px] text-[#FF6B16] font-semibold">Lab: {m.handsOnLab}</div>
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Module Title *
+                      </label>
+
+                      <input
+                        type="text"
+                        value={module.title}
+                        onChange={(e) =>
+                          setEditingSyllabus((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  modules: prev.modules.map((m) =>
+                                    String(m.id) === String(module.id)
+                                      ? { ...m, title: e.target.value }
+                                      : m
+                                  ),
+                                }
+                              : prev
+                          )
+                        }
+                        className="w-full p-2.5 rounded-lg border border-stone-300 text-sm outline-none focus:border-[#FF6B16]"
+                        placeholder="Enter module title"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Week Number *
+                      </label>
+
+                      <input
+                        type="number"
+                        min="1"
+                        value={module.weekNumber}
+                        onChange={(e) =>
+                          setEditingSyllabus((prev) =>
+                            prev
+                              ? {
+                                  ...prev,
+                                  modules: prev.modules.map((m) =>
+                                    String(m.id) === String(module.id)
+                                      ? {
+                                          ...m,
+                                          weekNumber: Number(e.target.value),
+                                        }
+                                      : m
+                                  ),
+                                }
+                              : prev
+                          )
+                        }
+                        className="w-full p-2.5 rounded-lg border border-stone-300 text-sm outline-none focus:border-[#FF6B16]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Module Description *
+                    </label>
+
+                    <textarea
+                      rows={2}
+                      value={module.summary}
+                      onChange={(e) =>
+                        setEditingSyllabus((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                modules: prev.modules.map((m) =>
+                                  String(m.id) === String(module.id)
+                                    ? { ...m, summary: e.target.value }
+                                    : m
+                                ),
+                              }
+                            : prev
+                        )
+                      }
+                      className="w-full p-2.5 rounded-lg border border-stone-300 text-sm outline-none focus:border-[#FF6B16] resize-y"
+                      placeholder="Describe what students will learn"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-stone-700 mb-1">
+                      Practical Lab / Project *
+                    </label>
+
+                    <textarea
+                      rows={2}
+                      value={module.handsOnLab}
+                      onChange={(e) =>
+                        setEditingSyllabus((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                modules: prev.modules.map((m) =>
+                                  String(m.id) === String(module.id)
+                                    ? { ...m, handsOnLab: e.target.value }
+                                    : m
+                                ),
+                              }
+                            : prev
+                        )
+                      }
+                      className="w-full p-2.5 rounded-lg border border-stone-300 text-sm outline-none focus:border-[#FF6B16] resize-y"
+                      placeholder="Describe the practical lab or project"
+                    />
                   </div>
                 </div>
               ))}
-            </div>
+
+              {editingSyllabus.modules.length === 0 && (
+                <div className="p-8 text-center rounded-xl border border-dashed border-stone-300 text-stone-500 text-sm">
+                  No modules added yet. Click Add Module to create one.
+                </div>
+              )}
+            </section>
           </div>
-        )}
+
+          {/* MODAL FOOTER */}
+          <div className="sticky bottom-0 bg-white border-t border-stone-200 p-5 flex flex-col-reverse sm:flex-row justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setEditingSyllabus(null)}
+              className="px-5 py-2.5 rounded-xl border border-stone-300 text-stone-600 text-xs font-bold hover:bg-stone-50"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSaveSyllabus}
+              className="px-5 py-2.5 rounded-xl bg-[#FF6B16] hover:bg-orange-600 text-white text-xs font-bold flex items-center justify-center gap-2"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
 
         {/* TAB: PPTS & PRESENTATIONS */}
         {adminTab === 'ppts' && (

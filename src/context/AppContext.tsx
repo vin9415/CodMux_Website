@@ -119,9 +119,10 @@ interface AppContextType {
   addPresentation: (deck: Omit<PresentationDeck, 'id' | 'uploadedAt'>) => void;
   deletePresentation: (id: string | number) => void;
 
-  // Syllabus & Curriculum
-  syllabusTracks: SyllabusTrack[];
-  updateSyllabusModule: (trackId: string | number, module: SyllabusModule) => void;
+// Syllabus & Curriculum
+syllabusTracks: SyllabusTrack[];
+updateSyllabusModule: (trackId: string | number, module: SyllabusModule) => void;
+updateSyllabusTrack: (track: SyllabusTrack) => void;
 
   // Early access, Inquiries, Announcements & Logs
   earlyAccessList: EarlyAccessEntry[];
@@ -830,6 +831,22 @@ mentorName: mentor?.name || '',
     addToast('success', 'Syllabus Updated', 'Course module outline updated.');
   };
 
+  const updateSyllabusTrack = (updatedTrack: SyllabusTrack) => {
+  setSyllabusTracks((prev) =>
+    prev.map((track) =>
+      String(track.id) === String(updatedTrack.id)
+        ? updatedTrack
+        : track
+    )
+  );
+
+  addToast(
+    'success',
+    'Syllabus Updated',
+    `${updatedTrack.trackName} has been updated successfully.`
+  );
+};
+
   // Early access & Inquiries
 const openEarlyAccessModal = (
   defaultInterest: string = CODEMUX_COURSES[0]
@@ -1171,7 +1188,8 @@ const updateInquiryStatus = async (
         deletePresentation,
 
         syllabusTracks,
-        updateSyllabusModule,
+updateSyllabusModule,
+updateSyllabusTrack,
 
         earlyAccessList,
 joinEarlyAccess,
