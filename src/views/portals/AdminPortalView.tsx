@@ -416,9 +416,24 @@ if (newUserPhone && !/^\d{10}$/.test(newUserPhone)) {
 const [editingSyllabus, setEditingSyllabus] =
   useState<SyllabusTrack | null>(null);
 
+const [isCreatingSyllabus, setIsCreatingSyllabus] = useState(false);
+
 const openSyllabusEditor = (track: SyllabusTrack) => {
-  // Work on a copy so Cancel does not change the displayed syllabus.
+  setIsCreatingSyllabus(false);
   setEditingSyllabus(JSON.parse(JSON.stringify(track)));
+};
+
+const openNewSyllabusEditor = () => {
+  setIsCreatingSyllabus(true);
+
+  setEditingSyllabus({
+    id: `syllabus-${Date.now()}`,
+    trackName: '',
+    badge: '',
+    description: '',
+    durationWeeks: 1,
+    modules: [],
+  });
 };
 
 const handleSaveSyllabus = () => {
@@ -435,7 +450,7 @@ const handleSaveSyllabus = () => {
   }
 
   if (editingSyllabus.modules.length === 0) {
-    addToast('error', 'No Modules', 'A course must have at least one module.');
+    addToast('error', 'No Modules', 'Please add at least one module.');
     return;
   }
 
@@ -456,8 +471,14 @@ const handleSaveSyllabus = () => {
     return;
   }
 
-  updateSyllabusTrack(editingSyllabus);
+  if (isCreatingSyllabus) {
+    addSyllabusTrack(editingSyllabus);
+  } else {
+    updateSyllabusTrack(editingSyllabus);
+  }
+
   setEditingSyllabus(null);
+  setIsCreatingSyllabus(false);
 };
 
 const handleAddSyllabusModule = () => {
@@ -1626,14 +1647,26 @@ const handleRemoveSyllabusModule = (moduleId: string | number) => {
 {/* TAB: SYLLABUS EDITOR */}
 {adminTab === 'syllabus' && (
   <div className="space-y-6">
-    <div>
-      <h2 className="text-xl font-bold text-stone-900 font-display">
-        Curriculum &amp; Syllabus Manager
-      </h2>
-      <p className="text-xs text-stone-500">
-        Manage course details, duration and modules across all learning tracks.
-      </p>
-    </div>
+   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div>
+    <h2 className="text-xl font-bold text-stone-900 font-display">
+      Curriculum &amp; Syllabus Manager
+    </h2>
+    <p className="text-xs text-stone-500">
+      Manage course details, duration and modules across all learning tracks.
+    </p>
+  </div>
+
+  <button
+    type="button"
+    onClick={openNewSyllabusEditor}
+    className="px-5 py-3 bg-[#FF6B16] hover:bg-orange-600 text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2 shadow-xs"
+  >
+    <PlusCircle className="w-4 h-4" />
+    Add New Syllabus
+  </button>
+</div>
+    
 
     <div className="space-y-6">
       {syllabusTracks.map((trk) => (
@@ -1660,20 +1693,37 @@ const handleRemoveSyllabusModule = (moduleId: string | number) => {
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold px-3 py-1 bg-stone-100 rounded-lg text-stone-700">
-                {trk.durationWeeks} Weeks
-              </span>
+            <div className="flex flex-wrap items-center gap-2">
+  <span className="text-xs font-semibold px-3 py-1 bg-stone-100 rounded-lg text-stone-700">
+    {trk.durationWeeks} Weeks
+  </span>
 
-              <button
-                type="button"
-                onClick={() => openSyllabusEditor(trk)}
-                className="px-4 py-2 rounded-xl bg-[#FF6B16] hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-2 transition-colors"
-              >
-                <Edit className="w-3.5 h-3.5" />
-                Edit Syllabus
-              </button>
-            </div>
+  <button
+    type="button"
+    onClick={() => openSyllabusEditor(trk)}
+    className="px-4 py-2 rounded-xl bg-[#FF6B16] hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-2 transition-colors"
+  >
+    <Edit className="w-3.5 h-3.5" />
+    Edit Syllabus
+  </button>
+
+  <button
+    type="button"
+    onClick={() => {
+      const confirmed = window.confirm(
+        `Are you sure you want to remove "${trk.trackName}"?`
+      );
+
+      if (confirmed) {
+        deleteSyllabusTrack(trk.id);
+      }
+    }}
+    className="px-4 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 text-xs font-bold flex items-center gap-2 transition-colors"
+  >
+    <Trash2 className="w-3.5 h-3.5" />
+    Remove
+  </button>
+</div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -1709,8 +1759,10 @@ const handleRemoveSyllabusModule = (moduleId: string | number) => {
           <div className="sticky top-0 z-10 bg-white border-b border-stone-200 p-5 sm:p-6 flex items-center justify-between">
             <div>
               <h3 className="text-lg sm:text-xl font-bold text-stone-900">
-                Edit Course Syllabus
-              </h3>
+  {isCreatingSyllabus
+    ? 'Add New Course Syllabus'
+    : 'Edit Course Syllabus'}
+</h3>
               <p className="text-xs text-stone-500 mt-1">
                 Update course information and manage modules.
               </p>
@@ -1991,8 +2043,8 @@ const handleRemoveSyllabusModule = (moduleId: string | number) => {
               onClick={handleSaveSyllabus}
               className="px-5 py-2.5 rounded-xl bg-[#FF6B16] hover:bg-orange-600 text-white text-xs font-bold flex items-center justify-center gap-2"
             >
-              <CheckCircle2 className="w-4 h-4" />
-              Save Changes
+             <CheckCircle2 className="w-4 h-4" />
+{isCreatingSyllabus ? 'Create Syllabus' : 'Save Changes'}
             </button>
           </div>
         </div>
