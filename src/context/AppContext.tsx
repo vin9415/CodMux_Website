@@ -123,6 +123,8 @@ interface AppContextType {
 syllabusTracks: SyllabusTrack[];
 updateSyllabusModule: (trackId: string | number, module: SyllabusModule) => void;
 updateSyllabusTrack: (track: SyllabusTrack) => void;
+addSyllabusTrack: (track: SyllabusTrack) => void;
+deleteSyllabusTrack: (trackId: string | number) => void;
 
   // Early access, Inquiries, Announcements & Logs
   earlyAccessList: EarlyAccessEntry[];
@@ -223,7 +225,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     getStored<ClassSchedule[]>('classesList', [])
   );
 
- 
+
 // Attendance
 const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>([]);
 
@@ -246,10 +248,79 @@ const [mentorAttendanceList, setMentorAttendanceList] = useState<MentorAttendanc
     getStored<PresentationDeck[]>('presentationsList', [])
   );
 
+
+
   // Syllabus
-  const [syllabusTracks, setSyllabusTracks] = useState<SyllabusTrack[]>(() =>
-    getStored<SyllabusTrack[]>('syllabusTracks', [])
+const [syllabusTracks, setSyllabusTracks] = useState<SyllabusTrack[]>(() =>
+  getStored<SyllabusTrack[]>('syllabusTracks', [])
+);
+
+
+const updateSyllabusModule = (
+  trackId: string | number,
+  module: SyllabusModule
+) => {
+  setSyllabusTracks((prev) =>
+    prev.map((track) => {
+      if (String(track.id) !== String(trackId)) return track;
+
+      const modIdx = track.modules.findIndex(
+        (m) => String(m.id) === String(module.id)
+      );
+
+      const newMods = [...track.modules];
+
+      if (modIdx >= 0) {
+        newMods[modIdx] = module;
+      } else {
+        newMods.push(module);
+      }
+
+      return { ...track, modules: newMods };
+    })
   );
+
+  addToast('success', 'Syllabus Updated', 'Course module outline updated.');
+};
+
+const updateSyllabusTrack = (updatedTrack: SyllabusTrack) => {
+  setSyllabusTracks((prev) =>
+    prev.map((track) =>
+      String(track.id) === String(updatedTrack.id)
+        ? updatedTrack
+        : track
+    )
+  );
+
+  addToast(
+    'success',
+    'Syllabus Updated',
+    `${updatedTrack.trackName} has been updated successfully.`
+  );
+};
+
+const addSyllabusTrack = (track: SyllabusTrack) => {
+  setSyllabusTracks((prev) => [...prev, track]);
+
+  addToast(
+    'success',
+    'Syllabus Added',
+    `${track.trackName} has been added successfully.`
+  );
+};
+
+const deleteSyllabusTrack = (trackId: string | number) => {
+  setSyllabusTracks((prev) =>
+    prev.filter((track) => String(track.id) !== String(trackId))
+  );
+
+  addToast(
+    'success',
+    'Syllabus Removed',
+    'The course syllabus has been removed.'
+  );
+};
+
 
   // Early Access & Inquiries
   const [earlyAccessList, setEarlyAccessList] = useState<EarlyAccessEntry[]>([]);
@@ -813,40 +884,8 @@ mentorName: mentor?.name || '',
     addToast('info', 'Deck Removed', 'Slide deck removed from library.');
   };
 
-  // Syllabus
-  const updateSyllabusModule = (trackId: string | number, module: SyllabusModule) => {
-    setSyllabusTracks((prev) =>
-      prev.map((track) => {
-        if (String(track.id) !== String(trackId)) return track;
-        const modIdx = track.modules.findIndex((m) => String(m.id) === String(module.id));
-        const newMods = [...track.modules];
-        if (modIdx >= 0) {
-          newMods[modIdx] = module;
-        } else {
-          newMods.push(module);
-        }
-        return { ...track, modules: newMods };
-      })
-    );
-    addToast('success', 'Syllabus Updated', 'Course module outline updated.');
-  };
-
-  const updateSyllabusTrack = (updatedTrack: SyllabusTrack) => {
-  setSyllabusTracks((prev) =>
-    prev.map((track) =>
-      String(track.id) === String(updatedTrack.id)
-        ? updatedTrack
-        : track
-    )
-  );
-
-  addToast(
-    'success',
-    'Syllabus Updated',
-    `${updatedTrack.trackName} has been updated successfully.`
-  );
-};
-
+ 
+  
   // Early access & Inquiries
 const openEarlyAccessModal = (
   defaultInterest: string = CODEMUX_COURSES[0]
@@ -1187,9 +1226,11 @@ const updateInquiryStatus = async (
         addPresentation,
         deletePresentation,
 
-        syllabusTracks,
+  syllabusTracks,
 updateSyllabusModule,
 updateSyllabusTrack,
+addSyllabusTrack,
+deleteSyllabusTrack,
 
         earlyAccessList,
 joinEarlyAccess,
