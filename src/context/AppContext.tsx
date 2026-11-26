@@ -222,15 +222,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     getStored<ClassSchedule[]>('classesList', [])
   );
 
-  // Attendance
-  const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>(() =>
-    getStored<AttendanceRecord[]>('attendanceList', [])
-  );
+ 
+// Attendance
+const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>([]);
 
-  // Mentor Attendance
-  const [mentorAttendanceList, setMentorAttendanceList] = useState<MentorAttendance[]>(() =>
-    getStored<MentorAttendance[]>('mentorAttendanceList', [])
-  );
+// Mentor Attendance
+const [mentorAttendanceList, setMentorAttendanceList] = useState<MentorAttendance[]>([]);
+
 
   // Projects
   const [projectsList, setProjectsList] = useState<ProjectItem[]>(() =>
